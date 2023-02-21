@@ -43,8 +43,8 @@ class NormalMapShader extends TextureShader {
     // bind uSampler to texture 0
     gl.uniform1i(this.mTextureRef, 0); // texture.activateTexture() binds to Texture0
     gl.uniform1i(this.mNormalRef, 1);
-    gl.uniform3f(this.mCameraPosRef, camera.getCameraPosVector());
-    gl.uniform3f(this.mLightPosRef, this.mLightPos);
+    gl.uniform3fv(this.mCameraPosRef, camera.getCameraPosVector());
+    gl.uniform3fv(this.mLightPosRef, this.mLightPos);
   }
 
   setLightPos(xForm) {
