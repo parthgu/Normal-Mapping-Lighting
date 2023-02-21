@@ -16,14 +16,13 @@ uniform vec3 uLightPos;
 // The "varying" keyword is for signifying that the texture coordinate will be
 // interpolated and thus varies. 
 varying vec2 vTextureCoord;
-varying vec2 vNormalCoord;
 varying vec3 vFragPos;
 
 vec3 lightColor = vec3(1.0, 1.0, 1.0);
 
 void main(void)  {
     vec4 textureColor = texture2D(textureSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-    vec3 normal = vec3(texture2D(normalSampler, vec2(vNormalCoord.s, vNormalCoord.t)));
+    vec3 normal = vec3(texture2D(normalSampler, vec2(vTextureCoord.s, vTextureCoord.t)));
     normal = normalize(normal);
     
     vec4 result = textureColor;
