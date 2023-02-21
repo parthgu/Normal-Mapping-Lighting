@@ -8,11 +8,48 @@ class NormalMapShader extends TextureShader {
     // Call super class constructor
     super(vertexShaderPath, fragmentShaderPath); // call SimpleShader constructor
 
+    this.mLightPos = [0, 0, 1];
+
     let gl = glSys.get();
-    this.mNormalMapTextureRef = gl.getUniformLocation(
+
+    this.mTextureRef = gl.getUniformLocation(
       this.mCompiledShader,
-      "uNormalMapTexture"
+      "textureSampler"
     );
+
+    this.mNormalRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "normalSampler"
+    );
+
+    this.mCameraPosRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uCameraPos"
+    );
+
+    this.mLightPosRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLightPos"
+    );
+  }
+
+  activate(pixelColor, trsMatrix, camera) {
+    // first call the super class' activate
+    super.activate(pixelColor, trsMatrix, camera.getCameraMatrix());
+
+    // now our own functionality: enable texture coordinate array
+    let gl = glSys.get();
+
+    // bind uSampler to texture 0
+    gl.uniform1i(this.mTextureRef, 0); // texture.activateTexture() binds to Texture0
+    gl.uniform1i(this.mNormalRef, 1);
+    gl.uniform3f(this.mCameraPosRef, camera.getCameraPosVector());
+    gl.uniform3f(this.mLightPosRef, this.mLightPos);
+  }
+
+  setLightPos(xForm) {
+    this.mLightPos[0] = xForm.getXPos();
+    this.mLightPos[1] = xForm.getYPos();
   }
 }
 
