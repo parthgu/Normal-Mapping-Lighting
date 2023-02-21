@@ -41,6 +41,8 @@ import NormalMapRenderable from "./renderables/normal_map_renderable.js";
 import { eTexCoordArrayIndex } from "./renderables/sprite_renderable.js";
 import { eAnimationType } from "./renderables/sprite_animate_renderable.js";
 
+import LightSource from "./light_source.js";
+
 // game objects
 import GameObject from "./game_objects/game_object.js";
 import GameObjectSet from "./game_objects/game_object_set.js";
@@ -101,6 +103,7 @@ export default {
   Scene,
   Transform,
   BoundingBox,
+  LightSource,
 
   // Renderables
   Renderable,
