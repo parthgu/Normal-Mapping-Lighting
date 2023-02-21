@@ -28,7 +28,7 @@ void main(void)  {
     
     vec4 result = textureColor;
     if (textureColor.a > 0.9) {
-        vec3 lightIncident = normalize(vFragPos - lightPos);
+        vec3 lightIncident = normalize(vFragPos - uLightPos);
         vec3 lightReflect = reflect(lightIncident, normal);
 
         vec3 ambient = 0.1 * lightColor;
