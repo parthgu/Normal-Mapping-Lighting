@@ -1,6 +1,6 @@
 "use strict";
 
-import Transform from "./utils/transform";
+import Transform from "./utils/transform.js";
 
 class LightSource {
   constructor() {
