@@ -75,7 +75,7 @@ function getSpriteShader() {
   return mSpriteShader;
 }
 function getNormalMapShader() {
-  return this.NormalMapShader;
+  return mNormalMapShader;
 }
 
 export {
