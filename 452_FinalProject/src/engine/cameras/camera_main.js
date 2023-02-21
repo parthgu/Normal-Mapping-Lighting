@@ -134,6 +134,21 @@ class Camera {
     getCameraMatrix() {
         return this.mCameraMatrix;
     }
+
+    // Getter for the View-Projection transform operator
+    getCameraPosVector() {
+        let center = [];
+        if (this.mCameraShake !== null) {
+            center = this.mCameraShake.getCenter();
+        } else {
+            center = this.getWCCenter();
+        }
+
+        let result = vec4.create();
+        let cameraTranslate = mat4.create();
+        mat4.translate(cameraTranslate, cameraTranslate, vec3.fromValues(center[0], center[1], 1.0));
+        return vec4.transformMat4(result, vec4.fromValues(0, 0, 0, 1), cameraTranslate);
+    }
     // #endregion
 
     // #region utilities WC bounds: collide and clamp
