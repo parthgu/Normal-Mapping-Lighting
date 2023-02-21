@@ -37,3 +37,5 @@ class NormalMapRenderable extends TextureRenderable {
     this.mLightSource = lightSource;
   }
 }
+
+export default NormalMapRenderable;
