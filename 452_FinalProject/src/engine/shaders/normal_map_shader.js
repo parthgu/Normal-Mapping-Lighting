@@ -8,7 +8,7 @@ class NormalMapShader extends TextureShader {
     // Call super class constructor
     super(vertexShaderPath, fragmentShaderPath); // call SimpleShader constructor
 
-    this.mLightPos = [0, 0, 1];
+    this.mLightPos = [0, 0, 5];
 
     let gl = glSys.get();
 
@@ -43,6 +43,7 @@ class NormalMapShader extends TextureShader {
     // bind uSampler to texture 0
     gl.uniform1i(this.mTextureRef, 0); // texture.activateTexture() binds to Texture0
     gl.uniform1i(this.mNormalRef, 1);
+
     let cameraVec4 = camera.getCameraPosVector();
     gl.uniform3fv(
       this.mCameraPosRef,
