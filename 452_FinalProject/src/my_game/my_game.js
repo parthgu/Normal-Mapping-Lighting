@@ -42,7 +42,7 @@ class MyGame extends engine.Scene {
       this.kBgNormal,
       this.lightSource
     );
-    this.bgR.getXform().setSize(150, 150);
+    this.bgR.getXform().setSize(100, 100);
     this.bgR.getXform().setPosition(50, 40);
   }
 
