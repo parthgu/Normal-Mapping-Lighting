@@ -48,6 +48,7 @@ class NormalMapShader extends TextureShader {
     gl.uniform1i(this.mNormalRef, 1);
 
     let cameraVec4 = camera.getCameraPosVector();
+    
     gl.uniform3fv(
       this.mCameraPosRef,
       vec3.fromValues(cameraVec4[0], cameraVec4[1], cameraVec4[2])
