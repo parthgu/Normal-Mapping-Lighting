@@ -27,7 +27,7 @@ class MyGame extends engine.Scene {
     this.mCamera = new engine.Camera(
       vec2.fromValues(50, 40), // position of the camera
       100, // width of camera
-      [0, 0, 640, 330] // viewport (orgX, orgY, width, height)
+      [0, 0, 640, 480] // viewport (orgX, orgY, width, height)
     );
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
     // sets the background to gray
@@ -56,13 +56,39 @@ class MyGame extends engine.Scene {
   draw() {
     // Step A: clear the canvas
     engine.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
+    this.mCamera.setViewAndCameraMatrix();
 
     // Step  B: Draw with all three cameras
     this.bgR.draw(this.mCamera);
   }
   // The update function, updates the application state. Make sure to _NOT_ draw
   // anything from this function!
-  update() {}
+  update() {
+    if (engine.input.isKeyPressed(engine.input.keys.W)) {
+      this.bgR.getXform().incYPosBy(0.3);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.A)) {
+      this.bgR.getXform().incXPosBy(-0.3);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.S)) {
+      this.bgR.getXform().incYPosBy(-0.3);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.D)) {
+      this.bgR.getXform().incXPosBy(0.3);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.Up)) {
+      this.lightSource.getXform().incYPosBy(0.3);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.Left)) {
+      this.lightSource.getXform().incXPosBy(-0.3);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.Down)) {
+      this.lightSource.getXform().incYPosBy(-0.3);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.Right)) {
+      this.lightSource.getXform().incXPosBy(0.3);
+    }
+  }
 }
 
 window.onload = function () {
