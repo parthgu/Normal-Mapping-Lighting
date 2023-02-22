@@ -10,6 +10,8 @@ class NormalMapShader extends TextureShader {
 
     this.mLightPos = [0, 0, 5];
 
+    this.mLightIntensity = 1.0;
+
     let gl = glSys.get();
 
     this.mTextureRef = gl.getUniformLocation(
@@ -31,6 +33,11 @@ class NormalMapShader extends TextureShader {
       this.mCompiledShader,
       "uLightPos"
     );
+
+    this.mLightIntensityRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uIntensity"
+    );
   }
 
   activate(pixelColor, trsMatrix, camera) {
@@ -50,11 +57,20 @@ class NormalMapShader extends TextureShader {
       vec3.fromValues(cameraVec4[0], cameraVec4[1], cameraVec4[2])
     );
     gl.uniform3fv(this.mLightPosRef, this.mLightPos);
+    gl.uniform1f(this.mLightIntensityRef, this.mLightIntensity);
   }
 
   setLightPos(xForm) {
     this.mLightPos[0] = xForm.getXPos();
     this.mLightPos[1] = xForm.getYPos();
+  }
+
+  setLightIntensity(factor) {
+    this.mLightIntensity = factor;
+  }
+
+  incLightIntensity(factor) {
+    this.mLightIntensity += factor;
   }
 }
 

@@ -65,28 +65,34 @@ class MyGame extends engine.Scene {
   // anything from this function!
   update() {
     if (engine.input.isKeyPressed(engine.input.keys.W)) {
-      this.bgR.getXform().incYPosBy(0.3);
+      this.bgR.getXform().incYPosBy(0.5);
     }
     if (engine.input.isKeyPressed(engine.input.keys.A)) {
-      this.bgR.getXform().incXPosBy(-0.3);
+      this.bgR.getXform().incXPosBy(-0.5);
     }
     if (engine.input.isKeyPressed(engine.input.keys.S)) {
-      this.bgR.getXform().incYPosBy(-0.3);
+      this.bgR.getXform().incYPosBy(-0.5);
     }
     if (engine.input.isKeyPressed(engine.input.keys.D)) {
-      this.bgR.getXform().incXPosBy(0.3);
+      this.bgR.getXform().incXPosBy(0.5);
     }
     if (engine.input.isKeyPressed(engine.input.keys.Up)) {
-      this.lightSource.getXform().incYPosBy(0.3);
+      this.lightSource.getXform().incYPosBy(0.5);
     }
     if (engine.input.isKeyPressed(engine.input.keys.Left)) {
-      this.lightSource.getXform().incXPosBy(-0.3);
+      this.lightSource.getXform().incXPosBy(-0.5);
     }
     if (engine.input.isKeyPressed(engine.input.keys.Down)) {
-      this.lightSource.getXform().incYPosBy(-0.3);
+      this.lightSource.getXform().incYPosBy(-0.5);
     }
     if (engine.input.isKeyPressed(engine.input.keys.Right)) {
-      this.lightSource.getXform().incXPosBy(0.3);
+      this.lightSource.getXform().incXPosBy(0.5);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.P)) {
+      this.lightSource.incIntensityBy(0.05);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.O)) {
+      this.lightSource.incIntensityBy(-0.05);
     }
   }
 }

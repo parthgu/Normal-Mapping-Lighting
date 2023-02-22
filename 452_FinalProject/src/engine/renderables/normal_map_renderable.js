@@ -19,7 +19,9 @@ class NormalMapRenderable extends TextureRenderable {
     let gl = glSys.get();
     texture.activate(this.mTexture);
     texture.activate(this.mNormalTexture, glSys.get().TEXTURE1);
+
     this.mShader.setLightPos(this.mLightSource.getXform());
+    this.mShader.setLightIntensity(this.mLightSource.getIntensity());
     this.mShader.activate(this.mColor, this.mXform.getTRSMatrix(), camera); // always activate the shader first!
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }

@@ -13,6 +13,8 @@ uniform sampler2D normalSampler;
 uniform vec3 uCameraPos;
 uniform vec3 uLightPos;
 
+uniform float uIntensity;
+
 // The "varying" keyword is for signifying that the texture coordinate will be
 // interpolated and thus varies. 
 varying vec2 vTexCoord;
@@ -31,7 +33,7 @@ void main(void)  {
         vec3 lightIncident = normalize(vFragPos - uLightPos);
         vec3 lightReflect = reflect(lightIncident, normal);
 
-        vec3 ambient = 0.3 * lightColor;
+        vec3 ambient = uIntensity * lightColor;
         vec3 diffuse = max(0.0, dot(normal, normalize(uLightPos - vFragPos))) * lightColor;
         vec3 specular = max(0.0, dot(normalize(uCameraPos - vFragPos), lightReflect)) * max(0.0, dot(normalize(uCameraPos - vFragPos), lightReflect)) * 0.5 * lightColor;
         result = vec4((ambient + diffuse) * vec3(result), 1.0);

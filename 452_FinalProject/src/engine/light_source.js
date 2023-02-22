@@ -6,6 +6,7 @@ class LightSource {
   constructor() {
     this.mXform = new Transform();
     this.mColor = [1.0, 1.0, 1.0];
+    this.mIntensity = 1.0;
   }
 
   getXform() {
@@ -18,6 +19,18 @@ class LightSource {
 
   setColor(color) {
     this.mColor = color;
+  }
+
+  setIntensity(factor) {
+    this.mIntensity = factor;
+  }
+
+  incIntensityBy(factor) {
+    this.mIntensity += factor;
+  }
+
+  getIntensity() {
+    return this.mIntensity;
   }
 }
 
