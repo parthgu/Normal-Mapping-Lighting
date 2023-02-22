@@ -35,8 +35,10 @@ void main(void)  {
 
         vec3 ambient = uIntensity * lightColor;
         vec3 diffuse = max(0.0, dot(normal, normalize(uLightPos - vFragPos))) * lightColor;
-        vec3 specular = max(0.0, dot(normalize(uCameraPos - vFragPos), lightReflect)) * max(0.0, dot(normalize(uCameraPos - vFragPos), lightReflect)) * 0.5 * lightColor;
-        result = vec4((ambient + diffuse) * vec3(result), 1.0);
+        
+        // vec3 specular = pow(max(0.0, dot(vec3(0.0, 0.0, 1.0), lightReflect)), 16.0) * 0.5 * lightColor;
+        vec3 specular = pow(max(0.0, lightReflect.z), 16.0) * 0.5 * lightColor; // same result as calculation above
+        result = vec4((ambient + diffuse + specular) * vec3(result), 1.0);
     }
     
     gl_FragColor = result;
