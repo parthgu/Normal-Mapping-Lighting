@@ -33,8 +33,9 @@ class MyGame extends engine.Scene {
     // sets the background to gray
 
     this.lightSource = new engine.LightSource();
-    this.lightSource.getXform().setXPos(50);
-    this.lightSource.getXform().setYPos(40);
+    // this.lightSource.getXform().setXPos(50);
+    // this.lightSource.getXform().setYPos(40);
+    this.lightSource.getXform().setPosition(50, 40, 1);
 
     // Large background image
     this.bgR = new engine.NormalMapRenderable(
@@ -87,6 +88,12 @@ class MyGame extends engine.Scene {
     }
     if (engine.input.isKeyPressed(engine.input.keys.Right)) {
       this.lightSource.getXform().incXPosBy(0.5);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.Q)) {
+      this.lightSource.getXform().incZPosBy(-0.5);
+    }
+    if (engine.input.isKeyPressed(engine.input.keys.E)) {
+      this.lightSource.getXform().incZPosBy(0.5);
     }
     if (engine.input.isKeyPressed(engine.input.keys.P)) {
       this.lightSource.incIntensityBy(0.05);

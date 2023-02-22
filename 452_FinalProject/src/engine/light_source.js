@@ -23,10 +23,17 @@ class LightSource {
 
   setIntensity(factor) {
     this.mIntensity = factor;
+    this.clampIntensity();
   }
 
   incIntensityBy(factor) {
     this.mIntensity += factor;
+    this.clampIntensity();
+  }
+
+  clampIntensity() {
+    if (this.mIntensity > 1) this.mIntensity = 1;
+    else if (this.mIntensity < 0) this.mIntensity = 0;
   }
 
   getIntensity() {

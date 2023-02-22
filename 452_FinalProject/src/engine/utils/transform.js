@@ -9,12 +9,17 @@
 class Transform {
     
     constructor() {
-        this.mPosition = vec2.fromValues(0, 0);  // this is the translation
+        this.mPosition = vec3.fromValues(0, 0, 0);  // this is the translation
         this.mScale = vec2.fromValues(1, 1);     // this is the width (x) and height (y)
         this.mRotationInRad = 0.0;               // in radians!
     }
 
     setPosition(xPos, yPos) { this.setXPos(xPos); this.setYPos(yPos); }
+    setPosition(xPos, yPos, zPos) {
+        this.setXPos(xPos);
+        this.setYPos(yPos);
+        this.setZPos(zPos);
+    }
     getPosition() { return this.mPosition; }
     getXPos() { return this.mPosition[0]; }
     setXPos(xPos) { this.mPosition[0] = xPos; }
@@ -22,6 +27,9 @@ class Transform {
     getYPos() { return this.mPosition[1]; }
     setYPos(yPos) { this.mPosition[1] = yPos; }
     incYPosBy(delta) { this.mPosition[1] += delta; }
+    getZPos() { return this.mPosition[2]; }
+    setZPos(zPos) { this.mPosition[2] = zPos; }
+    incZPosBy(delta) { this.mPosition[2] += delta; }
     
     setSize(width, height) {
         this.setWidth(width);

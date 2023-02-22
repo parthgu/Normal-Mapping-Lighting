@@ -8,10 +8,6 @@ class NormalMapShader extends TextureShader {
     // Call super class constructor
     super(vertexShaderPath, fragmentShaderPath); // call SimpleShader constructor
 
-    this.mLightPos = [0, 0, 5];
-
-    this.mLightIntensity = 1.0;
-
     let gl = glSys.get();
 
     this.mTextureRef = gl.getUniformLocation(
@@ -40,7 +36,7 @@ class NormalMapShader extends TextureShader {
     );
   }
 
-  activate(pixelColor, trsMatrix, camera) {
+  activate(pixelColor, trsMatrix, camera, light) {
     // first call the super class' activate
     super.activate(pixelColor, trsMatrix, camera.getCameraMatrix());
 
@@ -56,21 +52,8 @@ class NormalMapShader extends TextureShader {
       this.mCameraPosRef,
       vec3.fromValues(cameraVec4[0], cameraVec4[1], cameraVec4[2])
     );
-    gl.uniform3fv(this.mLightPosRef, this.mLightPos);
-    gl.uniform1f(this.mLightIntensityRef, this.mLightIntensity);
-  }
-
-  setLightPos(xForm) {
-    this.mLightPos[0] = xForm.getXPos();
-    this.mLightPos[1] = xForm.getYPos();
-  }
-
-  setLightIntensity(factor) {
-    this.mLightIntensity = factor;
-  }
-
-  incLightIntensity(factor) {
-    this.mLightIntensity += factor;
+    gl.uniform3fv(this.mLightPosRef, light.getXform().mPosition);
+    gl.uniform1f(this.mLightIntensityRef, light.mIntensity);
   }
 }
 
