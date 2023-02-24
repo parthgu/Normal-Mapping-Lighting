@@ -36,7 +36,7 @@ class LightSource {
   }
 
   _clampIntensity() {
-    if (this.mIntensity > 1) this.mIntensity = 1;
+    if (this.mIntensity > 3) this.mIntensity = 3;
     else if (this.mIntensity < 0) this.mIntensity = 0;
   }
 }
