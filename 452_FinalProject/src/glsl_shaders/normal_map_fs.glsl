@@ -21,7 +21,7 @@ uniform float uRadius;
 varying vec2 vTexCoord;
 varying vec3 vFragPos;
 
-vec3 lightColor = vec3(1.0, 1.0, 1.0);
+uniform vec3 uLightColor;
 vec3 normalZero = vec3(0.5, 0.5, 0.5);
 
 float diffuseWeight = 0.5;
@@ -37,10 +37,10 @@ void main(void)  {
         vec3 lightIncident = normalize(vFragPos - uLightPos);
         vec3 lightReflect = reflect(lightIncident, normal);
 
-        vec3 ambient = uIntensity * lightColor;
-        vec3 diffuse = max(0.0, dot(normal, normalize(uLightPos - vFragPos))) * diffuseWeight * lightColor;
+        vec3 ambient = uIntensity * uLightColor;
+        vec3 diffuse = max(0.0, dot(normal, normalize(uLightPos - vFragPos))) * diffuseWeight * uLightColor;
         // vec3 specular = pow(max(0.0, dot(vec3(0.0, 0.0, 1.0), lightReflect)), 16.0) * 0.5 * lightColor;
-        vec3 specular = pow(max(0.0, lightReflect.z), 2.0) * specularWeight * lightColor; // same result as calculation above
+        vec3 specular = pow(max(0.0, lightReflect.z), 2.0) * specularWeight * uLightColor; // same result as calculation above
         
         // result = vec4((ambient + diffuse + specular) * vec3(result), 1.0);
         // result = vec4((ambient + diffuse) * vec3(result), 1.0);

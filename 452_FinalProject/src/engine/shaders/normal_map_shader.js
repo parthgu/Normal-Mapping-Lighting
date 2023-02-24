@@ -34,6 +34,11 @@ class NormalMapShader extends TextureShader {
       this.mCompiledShader,
       "uIntensity"
     );
+
+    this.mLightColorRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLightColor"
+    );
   }
 
   activate(pixelColor, trsMatrix, camera, light) {
@@ -48,13 +53,14 @@ class NormalMapShader extends TextureShader {
     gl.uniform1i(this.mNormalRef, 1);
 
     let cameraVec4 = camera.getCameraPosVector();
-    
+
     gl.uniform3fv(
       this.mCameraPosRef,
       vec3.fromValues(cameraVec4[0], cameraVec4[1], cameraVec4[2])
     );
     gl.uniform3fv(this.mLightPosRef, light.getXform().mPosition);
     gl.uniform1f(this.mLightIntensityRef, light.mIntensity);
+    gl.uniform3fv(this.mLightColorRef, light.mColor);
   }
 }
 
