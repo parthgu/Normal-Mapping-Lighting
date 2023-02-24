@@ -21,6 +21,10 @@ class LightSource {
     this.mColor = color;
   }
 
+  getIntensity() {
+    return this.mIntensity;
+  }
+
   setIntensity(factor) {
     this.mIntensity = factor;
     this._clampIntensity();
@@ -34,10 +38,6 @@ class LightSource {
   _clampIntensity() {
     if (this.mIntensity > 1) this.mIntensity = 1;
     else if (this.mIntensity < 0) this.mIntensity = 0;
-  }
-
-  getIntensity() {
-    return this.mIntensity;
   }
 }
 
