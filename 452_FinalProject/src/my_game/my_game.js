@@ -65,18 +65,6 @@ class MyGame extends engine.Scene {
   // The update function, updates the application state. Make sure to _NOT_ draw
   // anything from this function!
   update() {
-    if (engine.input.isKeyPressed(engine.input.keys.W)) {
-      this.bgR.getXform().incYPosBy(0.5);
-    }
-    if (engine.input.isKeyPressed(engine.input.keys.A)) {
-      this.bgR.getXform().incXPosBy(-0.5);
-    }
-    if (engine.input.isKeyPressed(engine.input.keys.S)) {
-      this.bgR.getXform().incYPosBy(-0.5);
-    }
-    if (engine.input.isKeyPressed(engine.input.keys.D)) {
-      this.bgR.getXform().incXPosBy(0.5);
-    }
     if (engine.input.isKeyPressed(engine.input.keys.Up)) {
       this.lightSource.getXform().incYPosBy(0.5);
     }
@@ -90,7 +78,8 @@ class MyGame extends engine.Scene {
       this.lightSource.getXform().incXPosBy(0.5);
     }
     if (engine.input.isKeyPressed(engine.input.keys.Q)) {
-      this.lightSource.getXform().incZPosBy(-0.5);
+      if (this.lightSource.getXform().getZPos() > 0)
+        this.lightSource.getXform().incZPosBy(-0.5);
     }
     if (engine.input.isKeyPressed(engine.input.keys.E)) {
       this.lightSource.getXform().incZPosBy(0.5);
