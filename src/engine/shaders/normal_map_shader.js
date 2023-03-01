@@ -39,15 +39,19 @@ class NormalMapShader extends TextureShader {
       this.mCompiledShader,
       "uLightColor"
     );
+
+    this.mAmbientColorRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uAmbientColor"
+    );
+
+    this.mFalloffRef = gl.getUniformLocation(this.mCompiledShader, "uFalloff");
   }
 
   activate(pixelColor, trsMatrix, camera, light) {
     // first call the super class' activate
     super.activate(pixelColor, trsMatrix, camera.getCameraMatrix());
-
-    // now our own functionality: enable texture coordinate array
     let gl = glSys.get();
-
     // bind uSampler to texture 0
     gl.uniform1i(this.mTextureRef, 0); // texture.activateTexture() binds to Texture0
     gl.uniform1i(this.mNormalRef, 1);
@@ -58,9 +62,11 @@ class NormalMapShader extends TextureShader {
       this.mCameraPosRef,
       vec3.fromValues(cameraVec4[0], cameraVec4[1], cameraVec4[2])
     );
-    gl.uniform3fv(this.mLightPosRef, light.getXform().mPosition);
+    gl.uniform3fv(this.mLightPosRef, light.getXform().getPosition());
     gl.uniform1f(this.mLightIntensityRef, light.mIntensity);
-    gl.uniform3fv(this.mLightColorRef, light.mColor);
+    gl.uniform4fv(this.mLightColorRef, light.mColor);
+    gl.uniform3fv(this.mFalloffRef, light.mFalloff);
+    gl.uniform4fv(this.mAmbientColorRef, camera.mAmbientColor);
   }
 }
 
