@@ -5,8 +5,9 @@ import Transform from "./utils/transform.js";
 class LightSource {
   constructor() {
     this.mXform = new Transform();
-    this.mColor = [1.0, 1.0, 1.0];
+    this.mColor = [1.0, 1.0, 1.0, 1.0];
     this.mIntensity = 1.0;
+    this.mFalloff = [0.01, 0.01, 0.00001];
   }
 
   getXform() {
