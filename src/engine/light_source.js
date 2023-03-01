@@ -7,7 +7,7 @@ class LightSource {
     this.mXform = new Transform();
     this.mColor = [1.0, 1.0, 1.0, 1.0];
     this.mIntensity = 1.0;
-    this.mFalloff = [0.01, 0.01, 0.00001];
+    this.mFalloff = [0.1, 0.02, 0.001];
   }
 
   getXform() {

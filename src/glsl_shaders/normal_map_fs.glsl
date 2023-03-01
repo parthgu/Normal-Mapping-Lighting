@@ -46,7 +46,7 @@ void main(void)  {
         float Attenuation = 1.0 / (uFalloff.x + (uFalloff.y*D) + (uFalloff.z*D*D));
         
         // result = vec4((Ambient + specular + diffuse * Attenuation) * vec3(result), 1.0);
-        result = vec4((Ambient + diffuse * Attenuation) * vec3(result), 1.0);
+        result = vec4((Ambient + (diffuse + specular) * Attenuation) * vec3(result), 1.0);
     }
     gl_FragColor = result;
 }
