@@ -78,7 +78,8 @@ class MyGame extends engine.Scene {
   // The update function, updates the application state. Make sure to _NOT_ draw
   // anything from this function!
   update() {
-    if (this.lightFlicker.mNumCyclesLeft < this.lightFlicker.mCycles / 1.5) {
+    if (this.lightFlicker.mNumCyclesLeft < this.lightFlicker.mCycles / 1.4) {
+      this.lightSource.setIntensity(1.0);
       this.lightFlicker.reStart();
     }
     this.lightSource.IncIntensityBy(this.lightFlicker.getNext());
