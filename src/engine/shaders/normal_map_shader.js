@@ -20,10 +20,10 @@ class NormalMapShader extends TextureShader {
       "normalSampler"
     );
 
-    this.mCameraPosRef = gl.getUniformLocation(
-      this.mCompiledShader,
-      "uCameraPos"
-    );
+    // this.mCameraPosRef = gl.getUniformLocation(
+    //   this.mCompiledShader,
+    //   "uCameraPos"
+    // );
 
     this.mLightPosRef = gl.getUniformLocation(
       this.mCompiledShader,
@@ -64,12 +64,12 @@ class NormalMapShader extends TextureShader {
     gl.uniform1i(this.mHasDiffuseRef, light.mHasDiffuse);
     gl.uniform1i(this.mHasSpecRef, light.mHasSpec);
 
-    let cameraVec4 = camera.getCameraPosVector();
+    // let cameraVec4 = camera.getCameraPosVector();
 
-    gl.uniform3fv(
-      this.mCameraPosRef,
-      vec3.fromValues(cameraVec4[0], cameraVec4[1], cameraVec4[2])
-    );
+    // gl.uniform3fv(
+    //   this.mCameraPosRef,
+    //   vec3.fromValues(cameraVec4[0], cameraVec4[1], cameraVec4[2])
+    // );
     gl.uniform3fv(this.mLightPosRef, light.getXform().getPosition());
     gl.uniform4fv(this.mLightColorRef, light.mColor);
     gl.uniform3fv(this.mFalloffRef, light.mFalloff);
