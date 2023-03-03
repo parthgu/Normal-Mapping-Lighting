@@ -87,6 +87,13 @@ class MyGame extends engine.Scene {
       // this.lightSource.setIntensity(1.0);
       this.lightFlicker.reStart();
     }
+
+    this.lightSource.getXform().setPosition(
+      this.mCamera.mouseWCX(),
+      this.mCamera.mouseWCY(),
+      this.lightSource.getXform().getZPos()
+    );
+
     this.lightSource.IncIntensityBy(this.lightFlicker.getNext());
     // light y pos
     if (engine.input.isKeyPressed(engine.input.keys.Up)) {

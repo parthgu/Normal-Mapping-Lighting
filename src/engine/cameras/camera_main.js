@@ -47,7 +47,7 @@ class Camera {
 
     // background color
     this.mBGColor = [0.8, 0.8, 0.8, 1]; // RGB and Alpha
-    this.mAmbientColor = [1.0, 1.0, 1.0, 0.1];
+    this.mAmbientColor = [1.0, 1.0, 1.0, 0.3];
   }
 
   // #region Basic getter and setters
