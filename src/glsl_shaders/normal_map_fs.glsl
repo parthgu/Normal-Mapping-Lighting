@@ -1,22 +1,22 @@
 precision mediump float;
 
-// The object that fetches data from texture.
-// Must be set outside the shader.
 uniform sampler2D textureSampler;
 uniform sampler2D normalSampler;
 
-// Color of pixel
-// uniform vec4 uPixelColor;
 uniform vec3 uLightPos;
 uniform vec4 uLightColor;
 uniform vec4 uAmbientColor;
 uniform vec3 uFalloff;
-
 uniform bool uHasDiffuse;
 uniform bool uHasSpec;
 
-// The "varying" keyword is for signifying that the texture coordinate will be
-// interpolated and thus varies.
+uniform vec3 uLightPos2;
+uniform vec4 uLightColor2;
+uniform vec4 uAmbientColor2;
+uniform vec3 uFalloff2;
+uniform bool uHasDiffuse2;
+uniform bool uHasSpec2;
+
 varying vec2 vTexCoord;
 varying vec3 vFragPos;
 
