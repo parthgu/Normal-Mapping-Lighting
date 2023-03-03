@@ -54,7 +54,7 @@ class MyGame extends engine.Scene {
     this.mMsg2.setColor([1, 1, 1, 1]);
     this.mMsg2.getXform().setPosition(5, 5);
     this.mMsg2.setTextHeight(3);
-    this.lightFlicker = new engine.Oscillate(0.2, 40, 450);
+    this.lightFlicker = new engine.Shake(0.07, 20, 450);
   }
 
   //   _drawCamera(camera) {
@@ -79,7 +79,7 @@ class MyGame extends engine.Scene {
   // anything from this function!
   update() {
     if (this.lightFlicker.mNumCyclesLeft < this.lightFlicker.mCycles / 1.4) {
-      this.lightSource.setIntensity(1.0);
+      // this.lightSource.setIntensity(1.0);
       this.lightFlicker.reStart();
     }
     this.lightSource.IncIntensityBy(this.lightFlicker.getNext());
