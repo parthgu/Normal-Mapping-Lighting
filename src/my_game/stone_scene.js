@@ -11,7 +11,6 @@ class MyGame extends engine.Scene {
     this.kPlayer = "assets/Pebbles_028_BaseColor.jpg";
     this.kPlayerNormal = "assets/Pebbles_028_Normal.jpg";
 
-    // The camera to view the scene
     this.mCamera = null;
   }
 
@@ -52,15 +51,16 @@ class MyGame extends engine.Scene {
     this.redLightSource.getXform().setPosition(50, 40, 1);
     this.redLightSource.setColor([0.8, 0.1, 0.1, 1]);
     this.redLightSource.setFalloff([0.4, 0.04, 0.0001]);
+    this.mRedLightAngle = 0;
 
     this.mLights = [this.lightSource, this.blueLightSource, this.redLightSource];
 
     // Renderables with normal map functionality ------------------------------------------
     this.bgR = new engine.NormalMapRenderable(
-      this.kBg,
-      this.kBgNormal,
-      this.lightSource,
-      this.redLightSource
+      this.kBg, // Texture
+      this.kBgNormal, // Normal map
+      this.lightSource, // First light source
+      this.redLightSource // Second light source (optional)
     );
     this.bgR.getXform().setSize(30, 30);
     this.bgR.getXform().setPosition(50, 40);
@@ -86,14 +86,10 @@ class MyGame extends engine.Scene {
     this.mMsg2.setTextHeight(2);
   }
 
-  // This is the draw function, make sure to setup proper drawing environment, and more
-  // importantly, make sure to _NOT_ change any state.
   draw() {
-    // Step A: clear the canvas
     engine.clearCanvas([0.9, 0.9, 0.9, 1.0]); // clear to light gray
     this.mCamera.setViewAndCameraMatrix();
 
-    // Step  B: Draw with all three cameras
     this.mPlayer.draw(this.mCamera);
     this.bgR.draw(this.mCamera);
 
@@ -104,7 +100,19 @@ class MyGame extends engine.Scene {
   // The update function, updates the application state. Make sure to _NOT_ draw
   // anything from this function!
   update() {
+    // red light movement ------------------------------------------------------------------------------------
+    let kOrbitRadius = 15;
+    let kRotSpeed = 100;
+    let kRotSpeedRadians = (kRotSpeed * 2 * Math.PI / 360) / 60;
 
+    this.redLightSource.getXform().setPosition(
+      50 + kOrbitRadius * Math.cos(this.mRedLightAngle),
+      40 + kOrbitRadius * Math.sin(this.mRedLightAngle),
+      this.redLightSource.getXform().getZPos()
+    )
+    this.mRedLightAngle += kRotSpeedRadians;
+
+    // yellow light intensity and movement ------------------------------------------------------------------------------------
     if (this.lightFlicker.mNumCyclesLeft < this.lightFlicker.mCycles / 1.4) {
       this.lightFlicker.reStart();
     }
@@ -118,14 +126,13 @@ class MyGame extends engine.Scene {
       this.lightSource.getXform().getZPos()
     );
     
-    // light y pos
+    // blue light controls and falloff ------------------------------------------------------------------------------------
     if (engine.input.isKeyPressed(engine.input.keys.Up)) {
       this.blueLightSource.getXform().incYPosBy(1);
     }
     if (engine.input.isKeyPressed(engine.input.keys.Down)) {
       this.blueLightSource.getXform().incYPosBy(-1);
     }
-
     // light x pos
     if (engine.input.isKeyPressed(engine.input.keys.Left)) {
       this.blueLightSource.getXform().incXPosBy(-1);
@@ -133,7 +140,6 @@ class MyGame extends engine.Scene {
     if (engine.input.isKeyPressed(engine.input.keys.Right)) {
       this.blueLightSource.getXform().incXPosBy(1);
     }
-
     // light Z pos
     if (engine.input.isKeyPressed(engine.input.keys.W)) {
       this.blueLightSource.getXform().incZPosBy(-0.5);
@@ -145,7 +151,7 @@ class MyGame extends engine.Scene {
       this.blueLightSource.getXform().incZPosBy(0.5);
     }
 
-    // falloff controls
+    // blue light falloff controls
     if (engine.input.isKeyPressed(engine.input.keys.F))
       this.blueLightSource.incFalloffBy([0.01, 0, 0]);
     if (engine.input.isKeyPressed(engine.input.keys.G))
@@ -159,7 +165,7 @@ class MyGame extends engine.Scene {
     if (engine.input.isKeyPressed(engine.input.keys.N))
       this.blueLightSource.incFalloffBy([0, 0, -0.01]);
 
-    // diffuse and specular toggles
+    // diffuse and specular toggles ------------------------------------------------------------------------------------
     if (engine.input.isKeyClicked(engine.input.keys.O))
       this.mLights.forEach(l => {
         l.mHasDiffuse = !l.mHasDiffuse;
@@ -170,7 +176,7 @@ class MyGame extends engine.Scene {
         l.mHasSpec = !l.mHasSpec;
       });
 
-    // status message
+    // status messages ------------------------------------------------------------------------------------
     let lightPos = this.lightSource.getXform().getPosition();
     this.mMsg.setText("LightPos: " + lightPos);
     this.mMsg.getXform().setPosition(lightPos[0], lightPos[1]);
