@@ -2,17 +2,16 @@ precision mediump float;
 
 uniform sampler2D textureSampler;
 uniform sampler2D normalSampler;
+uniform vec4 uAmbientColor;
 
 uniform vec3 uLightPos;
 uniform vec4 uLightColor;
-uniform vec4 uAmbientColor;
 uniform vec3 uFalloff;
 uniform bool uHasDiffuse;
 uniform bool uHasSpec;
 
 uniform vec3 uLightPos2;
 uniform vec4 uLightColor2;
-uniform vec4 uAmbientColor2;
 uniform vec3 uFalloff2;
 uniform bool uHasDiffuse2;
 uniform bool uHasSpec2;
