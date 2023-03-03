@@ -6,10 +6,11 @@ import * as shaderResources from "../core/shader_resources.js";
 import * as texture from "../resources/texture.js";
 
 class NormalMapRenderable extends TextureRenderable {
-  constructor(texture, normalMapTexture, lightSource) {
+  constructor(texture, normalMapTexture, lightSource1, lightSource2 = null) {
     super(texture);
     this.mNormalTexture = normalMapTexture;
-    this.mLightSource = lightSource;
+    this.mLightSource = lightSource1;
+    this.mLightSource2 = lightSource2;
 
     super._setShader(shaderResources.getNormalMapShader());
   }
@@ -19,10 +20,8 @@ class NormalMapRenderable extends TextureRenderable {
     texture.activate(this.mTexture);
     texture.activate(this.mNormalTexture, glSys.get().TEXTURE1);
 
-    // this.mShader.setLightPos(this.mLightSource.getXform());
-    // this.mShader.setLightIntensity(this.mLightSource.getIntensity());
     this.mShader.activate(this.mColor, this.mXform.getTRSMatrix(),
-      camera, this.mLightSource); // always activate the shader first!
+      camera, this.mLightSource, this.mLightSource2); // always activate the shader first!
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
@@ -36,6 +35,10 @@ class NormalMapRenderable extends TextureRenderable {
 
   setLightSource(lightSource) {
     this.mLightSource = lightSource;
+  }
+
+  setLightSource2(lightSource) {
+    this.mLightSource2 = lightSource;
   }
 }
 

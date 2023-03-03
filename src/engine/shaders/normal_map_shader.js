@@ -29,7 +29,7 @@ class NormalMapShader extends TextureShader {
     this.getGLUniformRefs2();
   }
 
-  activate(pixelColor, trsMatrix, camera, light) {
+  activate(pixelColor, trsMatrix, camera, light, light2) {
     // first call the super class' activate
     super.activate(pixelColor, trsMatrix, camera.getCameraMatrix());
     
@@ -44,6 +44,18 @@ class NormalMapShader extends TextureShader {
     gl.uniform3fv(this.mLightPosRef, light.getXform().getPosition());
     gl.uniform4fv(this.mLightColorRef, light.mColor);
     gl.uniform3fv(this.mFalloffRef, light.mFalloff);
+
+    if (light2 != null) {
+      gl.uniform1i(this.mIsSecondLightActiveRef, true);
+
+      gl.uniform1i(this.mHasDiffuseRef2, light2.mHasDiffuse);
+      gl.uniform1i(this.mHasSpecRef2, light2.mHasSpec);
+      gl.uniform3fv(this.mLightPosRef2, light2.getXform().getPosition());
+      gl.uniform4fv(this.mLightColorRef2, light2.mColor);
+      gl.uniform3fv(this.mFalloffRef2, light2.mFalloff);
+    } else {
+      gl.uniform1i(this.mIsSecondLightActiveRef, false);
+    }
   }
 
   getGLUniformRefs1() {
@@ -74,6 +86,11 @@ class NormalMapShader extends TextureShader {
 
   getGLUniformRefs2() {
     let gl = glSys.get();
+
+    this.mIsSecondLightActiveRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "isSecondLightActive"
+    );
 
     this.mLightPosRef2 = gl.getUniformLocation(
       this.mCompiledShader,

@@ -35,17 +35,20 @@ class MyGame extends engine.Scene {
     this.lightSource = new engine.LightSource();
     this.lightSource.getXform().setPosition(50, 40, 10);
     this.lightSource.setColor([0.97, 0.76, 0.47, 1.0]);
-
+    this.lightFlicker = new engine.Shake(0.07, 20, 450);
+    
     this.blueLightSource = new engine.LightSource();
     this.blueLightSource.getXform().setPosition(50, 40, 5);
     this.blueLightSource.setColor([0.2, 0.5, 0.97, 1.0]);
     this.blueLightSource.setFalloff([0.4, 0.4, 0.0001]);
 
-    // Large background image
+    this.mLights = [this.lightSource, this.blueLightSource];
+
     this.bgR = new engine.NormalMapRenderable(
       this.kBg,
       this.kBgNormal,
-      this.lightSource
+      this.lightSource,
+      this.blueLightSource
     );
     this.bgR.getXform().setSize(100, 100);
     this.bgR.getXform().setPosition(50, 40);
@@ -59,7 +62,6 @@ class MyGame extends engine.Scene {
     this.mMsg2.setColor([1, 1, 1, 1]);
     this.mMsg2.getXform().setPosition(5, 5);
     this.mMsg2.setTextHeight(3);
-    this.lightFlicker = new engine.Shake(0.07, 20, 450);
   }
 
   //   _drawCamera(camera) {
@@ -113,13 +115,13 @@ class MyGame extends engine.Scene {
 
     // light Z pos
     if (engine.input.isKeyPressed(engine.input.keys.W)) {
-      this.lightSource.getXform().incZPosBy(-0.5);
+      this.blueLightSource.getXform().incZPosBy(-0.5);
 
-      if (this.lightSource.getXform().getZPos() < 0)
-        this.lightSource.getXform().setZPos(0);
+      if (this.blueLightSource.getXform().getZPos() < 0)
+        this.blueLightSource.getXform().setZPos(0);
     }
     if (engine.input.isKeyPressed(engine.input.keys.Q)) {
-      this.lightSource.getXform().incZPosBy(0.5);
+      this.blueLightSource.getXform().incZPosBy(0.5);
     }
 
     // light intensity
@@ -132,17 +134,17 @@ class MyGame extends engine.Scene {
 
     // falloff controls
     if (engine.input.isKeyPressed(engine.input.keys.F))
-      this.lightSource.incFalloffBy([0.01, 0, 0]);
+      this.blueLightSource.incFalloffBy([0.01, 0, 0]);
     if (engine.input.isKeyPressed(engine.input.keys.G))
-      this.lightSource.incFalloffBy([0, 0.01, 0]);
+      this.blueLightSource.incFalloffBy([0, 0.01, 0]);
     if (engine.input.isKeyPressed(engine.input.keys.H))
-      this.lightSource.incFalloffBy([0, 0, 0.01]);
+      this.blueLightSource.incFalloffBy([0, 0, 0.01]);
     if (engine.input.isKeyPressed(engine.input.keys.V))
-      this.lightSource.incFalloffBy([-0.01, 0, 0]);
+      this.blueLightSource.incFalloffBy([-0.01, 0, 0]);
     if (engine.input.isKeyPressed(engine.input.keys.B))
-      this.lightSource.incFalloffBy([0, -0.01, 0]);
+      this.blueLightSource.incFalloffBy([0, -0.01, 0]);
     if (engine.input.isKeyPressed(engine.input.keys.N))
-      this.lightSource.incFalloffBy([0, 0, -0.01]);
+      this.blueLightSource.incFalloffBy([0, 0, -0.01]);
 
     // diffuse and specular toggles
     if (engine.input.isKeyClicked(engine.input.keys.O))
