@@ -5,8 +5,11 @@ import Transform from "./utils/transform.js";
 class LightSource {
   constructor() {
     this.mXform = new Transform();
-    this.mColor = [1.0, 1.0, 1.0];
-    this.mIntensity = 1.0;
+    this.mColor = [1.0, 0.0, 1.0, 1.0];
+    this.mFalloff = [0.5, 0.02, 0.001];
+
+    this.mHasDiffuse = true;
+    this.mHasSpec = true;
   }
 
   getXform() {
@@ -22,22 +25,31 @@ class LightSource {
   }
 
   getIntensity() {
-    return this.mIntensity;
+    return this.mColor[3];
+  }
+  
+  setIntensity(newVal) {
+    this.mColor[3] = this._clampVal(newVal, 0, 1);
+  }
+  
+  IncIntensityBy(delta) {
+    this.mColor[3] = this._clampVal(
+      this.mColor[3] + delta, 0, 1
+    );
+  }
+  
+  getFalloff() { return this.mFalloff; }
+  setFalloff(newVal) { this.mFalloff = newVal; }
+  incFalloffBy(delta) {
+    this.mFalloff[0] += delta[0];
+    this.mFalloff[1] += delta[1];
+    this.mFalloff[2] += delta[2];
   }
 
-  setIntensity(factor) {
-    this.mIntensity = factor;
-    this._clampIntensity();
-  }
-
-  incIntensityBy(factor) {
-    this.mIntensity += factor;
-    this._clampIntensity();
-  }
-
-  _clampIntensity() {
-    if (this.mIntensity > 3) this.mIntensity = 3;
-    else if (this.mIntensity < 0) this.mIntensity = 0;
+  _clampVal(val, min, max) {
+    if (val < min) return min;
+    if (val > max) return max;
+    return val;
   }
 }
 
