@@ -148,7 +148,7 @@ class MyGame extends engine.Scene {
       this.bgR.getXform().incXPosBy(1);
     }
 
-    // blue light Z pos ------------------------------------------------------------------------------------
+    // blue light movement controls ------------------------------------------------------------------------------------
     if (engine.input.isKeyPressed(engine.input.keys.W)) {
       this.blueLightSource.getXform().incZPosBy(-0.5);
 
@@ -158,6 +158,14 @@ class MyGame extends engine.Scene {
     if (engine.input.isKeyPressed(engine.input.keys.Q)) {
       this.blueLightSource.getXform().incZPosBy(0.5);
     }
+    if (engine.input.isKeyPressed(engine.input.keys.I))
+      this.blueLightSource.getXform().incYPosBy(1);
+    if (engine.input.isKeyPressed(engine.input.keys.K))
+      this.blueLightSource.getXform().incYPosBy(-1);
+    if (engine.input.isKeyPressed(engine.input.keys.J))
+      this.blueLightSource.getXform().incXPosBy(-1);
+    if (engine.input.isKeyPressed(engine.input.keys.L))
+      this.blueLightSource.getXform().incXPosBy(1);
 
     // blue light falloff controls ------------------------------------------------------------------------------------
     if (engine.input.isKeyPressed(engine.input.keys.F))
