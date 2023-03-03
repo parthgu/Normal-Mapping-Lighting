@@ -36,6 +36,11 @@ class MyGame extends engine.Scene {
     this.lightSource.getXform().setPosition(50, 40, 10);
     this.lightSource.setColor([0.97, 0.76, 0.47, 1.0]);
 
+    this.blueLightSource = new engine.LightSource();
+    this.blueLightSource.getXform().setPosition(50, 40, 5);
+    this.blueLightSource.setColor([0.2, 0.5, 0.97, 1.0]);
+    this.blueLightSource.setFalloff([0.4, 0.4, 0.0001]);
+
     // Large background image
     this.bgR = new engine.NormalMapRenderable(
       this.kBg,
