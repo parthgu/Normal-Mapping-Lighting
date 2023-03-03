@@ -33,9 +33,7 @@ class MyGame extends engine.Scene {
     // sets the background to gray
 
     this.lightSource = new engine.LightSource();
-    // this.lightSource.getXform().setXPos(50);
-    // this.lightSource.getXform().setYPos(40);
-    this.lightSource.getXform().setPosition(50, 40, 15);
+    this.lightSource.getXform().setPosition(50, 40, 1);
 
     // Large background image
     this.bgR = new engine.NormalMapRenderable(
@@ -45,6 +43,16 @@ class MyGame extends engine.Scene {
     );
     this.bgR.getXform().setSize(100, 100);
     this.bgR.getXform().setPosition(50, 40);
+    
+    this.mMsg = new engine.FontRenderable("");
+    this.mMsg.setColor([1, 1, 1, 1]);
+    this.mMsg.getXform().setPosition(50, 40);
+    this.mMsg.setTextHeight(3);
+    
+    this.mMsg2 = new engine.FontRenderable("");
+    this.mMsg2.setColor([1, 1, 1, 1]);
+    this.mMsg2.getXform().setPosition(5, 5);
+    this.mMsg2.setTextHeight(3);
   }
 
   //   _drawCamera(camera) {
@@ -61,42 +69,79 @@ class MyGame extends engine.Scene {
 
     // Step  B: Draw with all three cameras
     this.bgR.draw(this.mCamera);
+    
+    this.mMsg.draw(this.mCamera);
+    this.mMsg2.draw(this.mCamera);
   }
   // The update function, updates the application state. Make sure to _NOT_ draw
   // anything from this function!
   update() {
+    // light y pos
     if (engine.input.isKeyPressed(engine.input.keys.Up)) {
       this.lightSource.getXform().incYPosBy(1);
-    }
-    if (engine.input.isKeyPressed(engine.input.keys.Left)) {
-      this.lightSource.getXform().incXPosBy(-1);
     }
     if (engine.input.isKeyPressed(engine.input.keys.Down)) {
       this.lightSource.getXform().incYPosBy(-1);
     }
+    
+    // light x pos
+    if (engine.input.isKeyPressed(engine.input.keys.Left)) {
+      this.lightSource.getXform().incXPosBy(-1);
+    }
     if (engine.input.isKeyPressed(engine.input.keys.Right)) {
       this.lightSource.getXform().incXPosBy(1);
     }
+    
+    // light Z pos
+    if (engine.input.isKeyPressed(engine.input.keys.W)) {
+      this.lightSource.getXform().incZPosBy(-0.5);
+      
+      if (this.lightSource.getXform().getZPos() < 0)
+        this.lightSource.getXform().setZPos(0);
+    }
     if (engine.input.isKeyPressed(engine.input.keys.Q)) {
-      if (this.lightSource.getXform().getZPos() > 0)
-        this.lightSource.getXform().incZPosBy(-0.5);
-    }
-    if (engine.input.isKeyPressed(engine.input.keys.E)) {
       this.lightSource.getXform().incZPosBy(0.5);
     }
-    if (engine.input.isKeyPressed(engine.input.keys.P)) {
-      this.lightSource.incIntensityBy(0.05);
-    }
-    if (engine.input.isKeyPressed(engine.input.keys.O)) {
-      this.lightSource.incIntensityBy(-0.05);
-    }
+    
+    // light intensity
     if (engine.input.isKeyPressed(engine.input.keys.L)) {
-      this.lightSource.getXform().incZPosBy(0.5);
+      this.lightSource.IncIntensityBy(-0.05);
     }
     if (engine.input.isKeyPressed(engine.input.keys.K)) {
-      this.lightSource.getXform().incZPosBy(-0.5);
+      this.lightSource.IncIntensityBy(0.05);
     }
+
+    // falloff controls
+    if (engine.input.isKeyPressed(engine.input.keys.F))
+      this.lightSource.incFalloffBy([0.01, 0, 0]);
+    if (engine.input.isKeyPressed(engine.input.keys.G))
+      this.lightSource.incFalloffBy([0, 0.01, 0]);
+    if (engine.input.isKeyPressed(engine.input.keys.H))
+      this.lightSource.incFalloffBy([0, 0, 0.01]);
+    if (engine.input.isKeyPressed(engine.input.keys.V))
+      this.lightSource.incFalloffBy([-0.01, 0, 0]);
+    if (engine.input.isKeyPressed(engine.input.keys.B))
+      this.lightSource.incFalloffBy([0, -0.01, 0]);
+    if (engine.input.isKeyPressed(engine.input.keys.N))
+    this.lightSource.incFalloffBy([0, 0, -0.01]);
+    
+    // diffuse and specular toggles
+    if (engine.input.isKeyClicked(engine.input.keys.O))
+      this.lightSource.mHasDiffuse = !this.lightSource.mHasDiffuse;
+    if (engine.input.isKeyClicked(engine.input.keys.P))
+      this.lightSource.mHasSpec = !this.lightSource.mHasSpec;
+    
+    // status message
+    let lightPos =  this.lightSource.getXform().getPosition();
+    this.mMsg.setText("LightPos: " + lightPos);
+    this.mMsg.getXform().setPosition(
+      lightPos[0],
+      lightPos[1]
+    );
+
+    this.mMsg2.setText("Light falloff: " + this.lightSource.getFalloff());
   }
+
 }
 
 window.onload = function () {
