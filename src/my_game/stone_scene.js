@@ -5,7 +5,7 @@ import engine from "../engine/index.js";
 class MyGame extends engine.Scene {
   constructor() {
     super();
-    
+
     this.kBg = "assets/Rock_044_BaseColor.jpg";
     this.kBgNormal = "assets/Rock_044_Normal.jpg";
     this.kPlayer = "assets/Pebbles_028_BaseColor.jpg";
@@ -20,7 +20,7 @@ class MyGame extends engine.Scene {
     engine.texture.load(this.kPlayer);
     engine.texture.load(this.kPlayerNormal);
   }
-  
+
   unload() {
     engine.texture.unload(this.kBg);
     engine.texture.unload(this.kBgNormal);
@@ -31,7 +31,7 @@ class MyGame extends engine.Scene {
   init() {
     this.mCamera = new engine.Camera(
       vec2.fromValues(50, 40), // position of the camera
-      100, // width of camera
+      75, // width of camera
       [0, 0, 640, 480] // viewport (orgX, orgY, width, height)
     );
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
@@ -41,12 +41,12 @@ class MyGame extends engine.Scene {
     this.lightSource.getXform().setPosition(50, 40, 10);
     this.lightSource.setColor([0.97, 0.76, 0.47, 1.0]);
     this.lightFlicker = new engine.Shake(0.07, 1, 450);
-    
+
     this.blueLightSource = new engine.LightSource();
     this.blueLightSource.getXform().setPosition(50, 40, 5);
     this.blueLightSource.setColor([0.2, 0.5, 0.97, 1]);
     this.blueLightSource.setFalloff([0.4, 0.04, 0.0001]);
-    
+
     this.redLightSource = new engine.LightSource();
     this.redLightSource.getXform().setPosition(50, 40, 3);
     this.redLightSource.setColor([0.8, 0.1, 0.1, 1]);
@@ -54,14 +54,25 @@ class MyGame extends engine.Scene {
     this.redLightBob = new engine.Oscillate(10, 10, 450);
     this.mRedLightAngle = 0;
 
-    this.mLights = [this.lightSource, this.blueLightSource, this.redLightSource];
+    this.mLights = [
+      this.lightSource,
+      this.blueLightSource,
+      this.redLightSource,
+    ];
+
+    this.mLights1 = [
+      this.lightSource,
+      this.blueLightSource,
+      this.redLightSource,
+    ];
+
+    this.mLights2 = [this.redLightSource];
 
     // Renderables with normal map functionality ------------------------------------------
     this.bgR = new engine.NormalMapRenderable(
       this.kBg, // Texture
-      this.kBgNormal, // Normal map
-      this.lightSource, // First light source
-      this.redLightSource // Second light source (optional)
+      this.kBgNormal // Normal map
+      // this.mLights2
     );
     this.bgR.getXform().setSize(30, 30);
     this.bgR.getXform().setPosition(50, 40);
@@ -69,12 +80,11 @@ class MyGame extends engine.Scene {
     this.mPlayer = new engine.NormalMapRenderable(
       this.kPlayer,
       this.kPlayerNormal,
-      this.lightSource,
-      this.blueLightSource
+      this.mLights1
     );
     this.mPlayer.getXform().setSize(100, 100);
     this.mPlayer.getXform().setPosition(50, 40);
-    
+
     // Status messages ------------------------------------------------------------------------------------
     this.mMsg = new engine.FontRenderable("");
     this.mMsg.setColor([1, 1, 1, 1]);
@@ -104,16 +114,18 @@ class MyGame extends engine.Scene {
     // red light movement ------------------------------------------------------------------------------------
     let kOrbitRadius = 15;
     let kRotSpeed = 100;
-    let kRotSpeedRadians = (kRotSpeed * 2 * Math.PI / 360) / 60;
+    let kRotSpeedRadians = (kRotSpeed * 2 * Math.PI) / 360 / 60;
 
     if (this.redLightBob.mNumCyclesLeft < this.redLightBob.mCycles / 1.4) {
       this.redLightBob.reStart();
     }
-    this.redLightSource.getXform().setPosition(
-      50 + kOrbitRadius * Math.cos(this.mRedLightAngle),
-      40 + kOrbitRadius * Math.sin(this.mRedLightAngle),
-      3 + this.redLightBob.getNext()
-    )
+    this.redLightSource
+      .getXform()
+      .setPosition(
+        50 + kOrbitRadius * Math.cos(this.mRedLightAngle),
+        40 + kOrbitRadius * Math.sin(this.mRedLightAngle),
+        3 + this.redLightBob.getNext()
+      );
     this.mRedLightAngle += kRotSpeedRadians;
 
     this.lightSource.setIntensity(
@@ -128,12 +140,14 @@ class MyGame extends engine.Scene {
       this.lightSource.getIntensity() + this.lightFlicker.getNext()
     );
 
-    this.lightSource.getXform().setPosition(
-      this.mCamera.mouseWCX(),
-      this.mCamera.mouseWCY(),
-      this.lightSource.getXform().getZPos()
-    );
-    
+    this.lightSource
+      .getXform()
+      .setPosition(
+        this.mCamera.mouseWCX(),
+        this.mCamera.mouseWCY(),
+        this.lightSource.getXform().getZPos()
+      );
+
     // small renderable controls ------------------------------------------------------------------------------------
     if (engine.input.isKeyPressed(engine.input.keys.Up)) {
       this.bgR.getXform().incYPosBy(1);
@@ -181,14 +195,20 @@ class MyGame extends engine.Scene {
     if (engine.input.isKeyPressed(engine.input.keys.N))
       this.blueLightSource.incFalloffBy([0, 0, -0.01]);
 
+    if (engine.input.isKeyPressed(engine.input.keys.T)) {
+      console.log(this.mCamera.getWCWidth());
+      this.mCamera.setWCWidth(5);
+      console.log("T");
+    }
+
     // diffuse and specular toggles ------------------------------------------------------------------------------------
     if (engine.input.isKeyClicked(engine.input.keys.O))
-      this.mLights.forEach(l => {
+      this.mLights.forEach((l) => {
         l.mHasDiffuse = !l.mHasDiffuse;
       });
 
     if (engine.input.isKeyClicked(engine.input.keys.P))
-      this.mLights.forEach(l => {
+      this.mLights.forEach((l) => {
         l.mHasSpec = !l.mHasSpec;
       });
 

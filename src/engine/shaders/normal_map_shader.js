@@ -25,37 +25,73 @@ class NormalMapShader extends TextureShader {
       "uAmbientColor"
     );
 
-    this.getGLUniformRefs1();
-    this.getGLUniformRefs2();
+    this.mActiveRef = null;
+    this.mPosRef = null;
+    this.mColorRef = null;
+    this.mFalloffRef = null;
+    this.mHasDiffuseRef = null;
+    this.mHasSpecRef = null;
+
+    // this.getGLUniformRefs1();
+    // this.getGLUniformRefs2();
   }
 
-  activate(pixelColor, trsMatrix, camera, light, light2) {
+  activate(pixelColor, trsMatrix, camera, lights) {
     // first call the super class' activate
     super.activate(pixelColor, trsMatrix, camera.getCameraMatrix());
-    
+
     let gl = glSys.get();
 
     gl.uniform1i(this.mTextureRef, 0);
     gl.uniform1i(this.mNormalRef, 1);
     gl.uniform4fv(this.mAmbientColorRef, camera.mAmbientColor);
 
-    gl.uniform1i(this.mHasDiffuseRef, light.mHasDiffuse);
-    gl.uniform1i(this.mHasSpecRef, light.mHasSpec);
-    gl.uniform3fv(this.mLightPosRef, light.getXform().getPosition());
-    gl.uniform4fv(this.mLightColorRef, light.mColor);
-    gl.uniform3fv(this.mFalloffRef, light.mFalloff);
-
-    if (light2 != null) {
-      gl.uniform1i(this.mIsSecondLightActiveRef, true);
-
-      gl.uniform1i(this.mHasDiffuseRef2, light2.mHasDiffuse);
-      gl.uniform1i(this.mHasSpecRef2, light2.mHasSpec);
-      gl.uniform3fv(this.mLightPosRef2, light2.getXform().getPosition());
-      gl.uniform4fv(this.mLightColorRef2, light2.mColor);
-      gl.uniform3fv(this.mFalloffRef2, light2.mFalloff);
-    } else {
-      gl.uniform1i(this.mIsSecondLightActiveRef, false);
+    let i = 0;
+    for (i; i < 8; i++) {
+      this.getUniforms(i);
+      if (lights != null) {
+        if (lights[i] == null) {
+          gl.uniform1i(this.mActiveRef, false);
+        } else {
+          gl.uniform1i(this.mActiveRef, lights[i].isActive());
+          gl.uniform3fv(this.mPosRef, lights[i].getXform().getPosition());
+          gl.uniform4fv(this.mColorRef, lights[i].getColor());
+          gl.uniform3fv(this.mFalloffRef, lights[i].getFalloff());
+          gl.uniform1i(this.mHasDiffuseRef, lights[i].hasDiffuse());
+          gl.uniform1i(this.mHasSpecRef, lights[i].hasSpec());
+        }
+      } else {
+        gl.uniform1i(this.mActiveRef, false);
+      }
     }
+  }
+
+  getUniforms(index) {
+    let gl = glSys.get();
+    this.mActiveRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].Active"
+    );
+    this.mPosRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].Pos"
+    );
+    this.mColorRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].Color"
+    );
+    this.mFalloffRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].Falloff"
+    );
+    this.mHasDiffuseRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].HasDiffuse"
+    );
+    this.mHasSpecRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].HasSpec"
+    );
   }
 
   getGLUniformRefs1() {
@@ -71,17 +107,14 @@ class NormalMapShader extends TextureShader {
       "uLightColor"
     );
 
-    this.mFalloffRef = gl.getUniformLocation(
-      this.mCompiledShader,
-      "uFalloff");
+    this.mFalloffRef = gl.getUniformLocation(this.mCompiledShader, "uFalloff");
 
     this.mHasDiffuseRef = gl.getUniformLocation(
       this.mCompiledShader,
-      "uHasDiffuse");
+      "uHasDiffuse"
+    );
 
-    this.mHasSpecRef = gl.getUniformLocation(
-      this.mCompiledShader,
-      "uHasSpec");
+    this.mHasSpecRef = gl.getUniformLocation(this.mCompiledShader, "uHasSpec");
   }
 
   getGLUniformRefs2() {
@@ -104,15 +137,18 @@ class NormalMapShader extends TextureShader {
 
     this.mFalloffRef2 = gl.getUniformLocation(
       this.mCompiledShader,
-      "uFalloff2");
+      "uFalloff2"
+    );
 
     this.mHasDiffuseRef2 = gl.getUniformLocation(
       this.mCompiledShader,
-      "uHasDiffuse2");
+      "uHasDiffuse2"
+    );
 
     this.mHasSpecRef2 = gl.getUniformLocation(
       this.mCompiledShader,
-      "uHasSpec2");
+      "uHasSpec2"
+    );
   }
 }
 

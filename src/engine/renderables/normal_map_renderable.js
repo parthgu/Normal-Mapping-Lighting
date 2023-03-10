@@ -6,11 +6,10 @@ import * as shaderResources from "../core/shader_resources.js";
 import * as texture from "../resources/texture.js";
 
 class NormalMapRenderable extends TextureRenderable {
-  constructor(texture, normalMapTexture, lightSource1, lightSource2 = null) {
+  constructor(texture, normalMapTexture, lightSources = null) {
     super(texture);
     this.mNormalTexture = normalMapTexture;
-    this.mLightSource = lightSource1;
-    this.mLightSource2 = lightSource2;
+    this.mLightSources = lightSources;
 
     super._setShader(shaderResources.getNormalMapShader());
   }
@@ -20,8 +19,12 @@ class NormalMapRenderable extends TextureRenderable {
     texture.activate(this.mTexture);
     texture.activate(this.mNormalTexture, glSys.get().TEXTURE1);
 
-    this.mShader.activate(this.mColor, this.mXform.getTRSMatrix(),
-      camera, this.mLightSource, this.mLightSource2); // always activate the shader first!
+    this.mShader.activate(
+      this.mColor,
+      this.mXform.getTRSMatrix(),
+      camera,
+      this.mLightSources
+    ); // always activate the shader first!
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
@@ -29,16 +32,14 @@ class NormalMapRenderable extends TextureRenderable {
     return this.mSecondTexture;
   }
 
-  getLightSource() {
-    return this.mLightSource;
+  getLightSources() {
+    return this.mLightSources;
   }
 
-  setLightSource(lightSource) {
-    this.mLightSource = lightSource;
-  }
-
-  setLightSource2(lightSource) {
-    this.mLightSource2 = lightSource;
+  addLightSource(light) {
+    if (this.mLightSources.length < 8) {
+      this.mLightSources.push(light);
+    }
   }
 }
 
