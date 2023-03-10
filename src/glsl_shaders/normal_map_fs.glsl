@@ -25,6 +25,8 @@ vec3 normalZero = vec3(0.5, 0.5, 0.5);
 float diffuseWeight = 0.5;
 float specularWeight = 0.5;
 
+float minWeightThresh = 0.6;
+
 void main(void)  {
     vec4 textureColor = texture2D(textureSampler, vTexCoord);
     vec3 normal = texture2D(normalSampler, vTexCoord).rgb;
@@ -43,14 +45,22 @@ void main(void)  {
         
         vec3 diffuse = vec3(0.0, 0.0, 0.0);
         if (uHasDiffuse) {
-            diffuse = max(0.0, dot(normal, normalize(uLightPos - vFragPos)))
-                * Attenuation * uLightColor.rgb * uLightColor.a;
+            float diffuseTerm = max(0.0, dot(normal, normalize(uLightPos - vFragPos)))
+                * Attenuation;
+            if (diffuseTerm > minWeightThresh) diffuseTerm = minWeightThresh;
+            else diffuseTerm = 0.0;
+
+            diffuse = diffuseTerm * uLightColor.rgb * uLightColor.a;
         }
 
         vec3 specular = vec3(0.0, 0.0, 0.0);
         if (uHasSpec) {
-            specular = pow(max(0.0, lightReflect.z), 2.0)
-                * Attenuation * uLightColor.rgb * uLightColor.a;
+            float specTerm = pow(max(0.0, lightReflect.z), 2.0)
+                * Attenuation;
+            if (specTerm > minWeightThresh) specTerm = minWeightThresh;
+            else specTerm = 0.0;
+
+            specular = specTerm * uLightColor.rgb * uLightColor.a;
         }
 
         if (isSecondLightActive) {
@@ -62,13 +72,21 @@ void main(void)  {
                 (uFalloff2.x + (uFalloff2.y*D) + (uFalloff2.z*D*D));
             
             if (uHasDiffuse2) {
-            diffuse += max(0.0, dot(normal, normalize(uLightPos2 - vFragPos)))
-                * Attenuation * uLightColor2.rgb * uLightColor2.a;
+                float diffuseTerm = max(0.0, dot(normal, normalize(uLightPos2 - vFragPos)))
+                    * Attenuation;
+                if (diffuseTerm > minWeightThresh) diffuseTerm = minWeightThresh;
+                else diffuseTerm = 0.0;
+
+                diffuse += diffuseTerm * uLightColor2.rgb * uLightColor2.a;
             }
 
             if (uHasSpec2) {
-                specular += pow(max(0.0, lightReflect.z), 2.0)
-                    * Attenuation * uLightColor2.rgb * uLightColor2.a;
+                float specTerm = pow(max(0.0, lightReflect.z), 2.0)
+                    * Attenuation;
+                if (specTerm > minWeightThresh) specTerm = minWeightThresh;
+                else specTerm = 0.0;
+
+                specular += specTerm * uLightColor2.rgb * uLightColor2.a;
             }
         }
         
