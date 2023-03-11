@@ -29,8 +29,11 @@ class NormalMapShader extends TextureShader {
     this.getGLUniformRefs2();
   }
 
-  activate(pixelColor, trsMatrix, camera, light, light2) {
-    // first call the super class' activate
+  activate(pixelColor,
+    trsMatrix, modelMatNoScale,
+    camera, light, light2)
+  {
+      // first call the super class' activate
     super.activate(pixelColor, trsMatrix, camera.getCameraMatrix());
     
     let gl = glSys.get();
@@ -44,6 +47,11 @@ class NormalMapShader extends TextureShader {
     gl.uniform3fv(this.mLightPosRef, light.getXform().getPosition());
     gl.uniform4fv(this.mLightColorRef, light.mColor);
     gl.uniform3fv(this.mFalloffRef, light.mFalloff);
+
+    gl.uniform1i(this.mIsInWCRef, light.mIsUsingWC);
+    gl.uniformMatrix4fv(this.uModelRTMatRef, false, modelMatNoScale);
+    gl.uniform3fv(this.mLightPosModelSpaceRef,
+        light.getModelSpaceXform().getPosition());
 
     if (light2 != null) {
       gl.uniform1i(this.mIsSecondLightActiveRef, true);
@@ -60,6 +68,23 @@ class NormalMapShader extends TextureShader {
 
   getGLUniformRefs1() {
     let gl = glSys.get();
+
+    this.uModelRTMatRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uModelRTMat"
+    );
+
+    this.mLightPosModelSpaceRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLightPosModelSpace"
+    );
+
+    this.mIsInWCRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uIsInWC"
+    );
+
+    // ----------------------------------------------------------------------
 
     this.mLightPosRef = gl.getUniformLocation(
       this.mCompiledShader,

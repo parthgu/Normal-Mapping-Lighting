@@ -4,7 +4,10 @@ import Transform from "./utils/transform.js";
 
 class LightSource {
   constructor() {
-    this.mXform = new Transform();
+    this.mXform = new Transform(); // WC position
+    this.mModelSpaceXform = new Transform(); // Model-relative position
+    this.mIsUsingWC = true;
+    
     this.mColor = [1.0, 0.0, 1.0, 1.0];
     this.mFalloff = [0.5, 0.02, 0.001];
 
@@ -12,26 +15,17 @@ class LightSource {
     this.mHasSpec = false;
   }
 
-  getXform() {
-    return this.mXform;
-  }
+  getXform() { return this.mXform; }
 
-  getColor() {
-    return this.mColor;
-  }
+  getModelSpaceXform() { return this.mModelXform; }
 
-  setColor(color) {
-    this.mColor = color;
-  }
+  getColor() { return this.mColor; }
+  setColor(color) { this.mColor = color; }
 
-  getIntensity() {
-    return this.mColor[3];
-  }
-  
+  getIntensity() { return this.mColor[3]; }
   setIntensity(newVal) {
     this.mColor[3] = this._clampVal(newVal, 0, 1);
   }
-  
   IncIntensityBy(delta) {
     this.mColor[3] = this._clampVal(
       this.mColor[3] + delta, 0, 1
