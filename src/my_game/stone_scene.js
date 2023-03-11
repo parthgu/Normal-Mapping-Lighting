@@ -201,9 +201,9 @@ class StoneScene extends engine.Scene {
   }
 }
 
-window.onload = function () {
-  engine.init("GLCanvas");
+// window.onload = function () {
+//   engine.init("GLCanvas");
 
-  let myGame = new StoneScene();
-  myGame.start();
-};
+//   let myGame = new StoneScene();
+//   myGame.start();
+// };

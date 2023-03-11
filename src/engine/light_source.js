@@ -11,13 +11,13 @@ class LightSource {
     this.mColor = [1.0, 0.0, 1.0, 1.0];
     this.mFalloff = [0.5, 0.02, 0.001];
 
-    this.mHasDiffuse = false;
-    this.mHasSpec = false;
+    this.mHasDiffuse = true;
+    this.mHasSpec = true;
   }
 
   getXform() { return this.mXform; }
 
-  getModelSpaceXform() { return this.mModelXform; }
+  getModelSpaceXform() { return this.mModelSpaceXform; }
 
   getColor() { return this.mColor; }
   setColor(color) { this.mColor = color; }
