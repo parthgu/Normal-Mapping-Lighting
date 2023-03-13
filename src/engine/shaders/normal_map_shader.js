@@ -25,30 +25,36 @@ class NormalMapShader extends TextureShader {
       "uAmbientColor"
     );
 
-    this.mActiveRef = null;
-    this.mPosRef = null;
-    this.mColorRef = null;
-    this.mFalloffRef = null;
-    this.mHasDiffuseRef = null;
-    this.mHasSpecRef = null;
-
-    // this.getGLUniformRefs1();
-    // this.getGLUniformRefs2();
+    this.mHasNormalMap = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uHasNormalMap"
+    );
   }
 
-  activate(pixelColor, trsMatrix, camera, lights) {
-    // first call the super class' activate
-    super.activate(pixelColor, trsMatrix, camera.getCameraMatrix());
-
+  activate(renderable, camera) {
     let gl = glSys.get();
 
+    super.activate(
+      renderable.mColor,
+      renderable.mXform.getTRSMatrix(),
+      camera.getCameraMatrix()
+    );
+
     gl.uniform1i(this.mTextureRef, 0);
-    gl.uniform1i(this.mNormalRef, 1);
+    
+    if (renderable.mNormalTexture !== null) {
+      gl.uniform1i(this.mHasNormalMap, true);
+      gl.uniform1i(this.mNormalRef, 1);
+    } else {
+      gl.uniform1i(this.mHasNormalMap, false);
+    }
+      
     gl.uniform4fv(this.mAmbientColorRef, camera.mAmbientColor);
 
-    let i = 0;
-    for (i; i < 8; i++) {
+    let lights = renderable.mLightSources;
+    for (let i = 0; i < 8; i++) {
       this.getUniforms(i);
+
       if (lights != null) {
         if (lights[i] == null) {
           gl.uniform1i(this.mActiveRef, false);
@@ -65,7 +71,7 @@ class NormalMapShader extends TextureShader {
       }
     }
   }
-
+  
   getUniforms(index) {
     let gl = glSys.get();
     this.mActiveRef = gl.getUniformLocation(

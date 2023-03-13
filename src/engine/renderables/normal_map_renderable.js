@@ -17,13 +17,11 @@ class NormalMapRenderable extends TextureRenderable {
   draw(camera) {
     let gl = glSys.get();
     texture.activate(this.mTexture);
-    texture.activate(this.mNormalTexture, glSys.get().TEXTURE1);
+    if (this.mNormalTexture !== null)
+      texture.activate(this.mNormalTexture, glSys.get().TEXTURE1);
 
     this.mShader.activate(
-      this.mColor,
-      this.mXform.getTRSMatrix(),
-      camera,
-      this.mLightSources
+      this, camera
     ); // always activate the shader first!
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }

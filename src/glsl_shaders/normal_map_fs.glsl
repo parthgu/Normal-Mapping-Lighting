@@ -1,21 +1,9 @@
 precision mediump float;
 
 uniform sampler2D textureSampler;
+uniform bool uHasNormalMap;
 uniform sampler2D normalSampler;
 uniform vec4 uAmbientColor;
-
-uniform vec3 uLightPos;
-uniform vec4 uLightColor;
-uniform vec3 uFalloff;
-uniform bool uHasDiffuse;
-uniform bool uHasSpec;
-
-uniform bool isSecondLightActive;
-uniform vec3 uLightPos2;
-uniform vec4 uLightColor2;
-uniform vec3 uFalloff2;
-uniform bool uHasDiffuse2;
-uniform bool uHasSpec2;
 
 varying vec2 vTexCoord;
 varying vec3 vFragPos;
@@ -38,23 +26,27 @@ float specularWeight = 0.5;
 
 void main(void)  {
     vec4 textureColor = texture2D(textureSampler, vTexCoord);
-    vec3 normal = texture2D(normalSampler, vTexCoord).rgb;
-    normal = normalize(normal - normalZero);
+    vec3 normal = vec3(0.0);
+    if (uHasNormalMap) {
+        normal = texture2D(normalSampler, vTexCoord).rgb;
+        normal = normalize(normal - normalZero);
+    } else {
+        normal = vec3(0.0, 0.0, 1.0);
+    }
     
     vec4 result = textureColor;
     vec3 Ambient = uAmbientColor.rgb * uAmbientColor.a;
-
+    
     if (textureColor.a > 0.9) {
-        vec3 lightIncident = normalize(vFragPos - uLightPos);
-        vec3 lightReflect = reflect(lightIncident, normal);
+        vec3 diffuse = vec3(0.0);
+        vec3 specular = vec3(0.0);
+        vec3 lightIncident = vec3(0.0);
+        vec3 lightReflect = vec3(0.0);
 
         float Attenuation = 0.0;
-        
-        vec3 diffuse = vec3(0.0, 0.0, 0.0);
-        vec3 specular = vec3(0.0, 0.0, 0.0);
 
-        for(int i = 0; i < 8; i++){
-            if(uLights[i].Active){
+        for(int i = 0; i < 8; i++) {
+            if(uLights[i].Active) {
                 lightIncident = normalize(vFragPos - uLights[i].Pos);
                 lightReflect = reflect(lightIncident, normal);
 

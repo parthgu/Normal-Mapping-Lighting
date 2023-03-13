@@ -69,7 +69,8 @@ class MyGame extends engine.Scene {
     // Renderables with normal map functionality ------------------------------------------
     this.bgR = new engine.NormalMapRenderable(
       this.kBg, // Texture
-      this.kBgNormal, // Normal map
+      // this.kBgNormal, // Normal map
+      null, // Normal map
       this.mLights1
     );
     this.bgR.getXform().setSize(30, 30);
