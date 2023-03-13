@@ -24,10 +24,26 @@ class NormalMapShader extends TextureShader {
       this.mCompiledShader,
       "uAmbientColor"
     );
-
+    
     this.mHasNormalMap = gl.getUniformLocation(
       this.mCompiledShader,
       "uHasNormalMap"
+    );
+
+    // material properties
+    this.mMaterialDiffuseWeight = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uMaterialDiffuseWeight"
+    );
+
+    this.mMaterialSpecularWeight = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uMaterialSpecularWeight"
+    );
+
+    this.mMaterialShininess = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uMaterialShininess"
     );
   }
 
@@ -50,6 +66,10 @@ class NormalMapShader extends TextureShader {
     }
       
     gl.uniform4fv(this.mAmbientColorRef, camera.mAmbientColor);
+    gl.uniform1f(this.mMaterialDiffuseWeight, renderable.mDiffuseWeight);
+    gl.uniform1f(this.mMaterialSpecularWeight, renderable.mSpecularWeight);
+    gl.uniform1f(this.mMaterialShininess, renderable.mShininess);
+
 
     let lights = renderable.mLightSources;
     for (let i = 0; i < 8; i++) {

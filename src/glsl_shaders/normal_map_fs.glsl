@@ -5,6 +5,10 @@ uniform bool uHasNormalMap;
 uniform sampler2D normalSampler;
 uniform vec4 uAmbientColor;
 
+uniform float uMaterialDiffuseWeight;
+uniform float uMaterialSpecularWeight;
+uniform float uMaterialShininess;
+
 varying vec2 vTexCoord;
 varying vec3 vFragPos;
 
@@ -21,9 +25,6 @@ uniform Light uLights[8];
 
 vec3 normalZero = vec3(0.5, 0.5, 0.5);
 
-float diffuseWeight = 0.5;
-float specularWeight = 0.5;
-
 void main(void)  {
     vec4 textureColor = texture2D(textureSampler, vTexCoord);
     vec3 normal = vec3(0.0);
@@ -36,7 +37,7 @@ void main(void)  {
     
     vec4 result = textureColor;
     vec3 Ambient = uAmbientColor.rgb * uAmbientColor.a;
-    
+
     if (textureColor.a > 0.9) {
         vec3 diffuse = vec3(0.0);
         vec3 specular = vec3(0.0);
@@ -62,12 +63,12 @@ void main(void)  {
             
                 if (uLights[i].HasDiffuse) {
                     diffuse += max(0.0, dot(normal, normalize(uLights[i].Pos - vFragPos)))
-                        * Attenuation * uLights[i].Color.rgb * uLights[i].Color.a;
+                        * Attenuation * uMaterialDiffuseWeight * uLights[i].Color.rgb * uLights[i].Color.a;
                 }
 
                 if (uLights[i].HasSpec) {
-                    specular += pow(max(0.0, lightReflect.z), 2.0)
-                        * Attenuation * uLights[i].Color.rgb * uLights[i].Color.a;
+                    specular += pow(max(0.0, lightReflect.z), uMaterialShininess)
+                        * Attenuation * uMaterialSpecularWeight * uLights[i].Color.rgb * uLights[i].Color.a;
                 }
             }
         }

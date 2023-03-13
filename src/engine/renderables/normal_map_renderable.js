@@ -11,6 +11,10 @@ class NormalMapRenderable extends TextureRenderable {
     this.mNormalTexture = normalMapTexture;
     this.mLightSources = lightSources;
 
+    this.mDiffuseWeight = 0.7;
+    this.mSpecularWeight = 0.7;
+    this.mShininess = 16;
+
     super._setShader(shaderResources.getNormalMapShader());
   }
 
