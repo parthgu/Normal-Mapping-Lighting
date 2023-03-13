@@ -24,7 +24,7 @@ struct Light{
     bool Active;
     vec3 Pos;
     vec4 Color;
-    vec3 Falloff;
+    vec2 Falloff;
     bool HasDiffuse;
     bool HasSpec;
 };
@@ -48,48 +48,25 @@ void main(void)  {
         vec3 lightIncident = normalize(vFragPos - uLightPos);
         vec3 lightReflect = reflect(lightIncident, normal);
 
-        // float D = length(uLightPos - vFragPos);
         float Attenuation = 0.0;
         
         vec3 diffuse = vec3(0.0, 0.0, 0.0);
-        // if (uHasDiffuse) {
-        //     diffuse = max(0.0, dot(normal, normalize(uLightPos - vFragPos)))
-        //         * Attenuation * uLightColor.rgb * uLightColor.a;
-        // }
-
         vec3 specular = vec3(0.0, 0.0, 0.0);
-        // if (uHasSpec) {
-        //     specular = pow(max(0.0, lightReflect.z), 2.0)
-        //         * Attenuation * uLightColor.rgb * uLightColor.a;
-        // }
-
-        // if (isSecondLightActive) {
-        //     lightIncident = normalize(vFragPos - uLightPos2);
-        //     lightReflect = reflect(lightIncident, normal);
-            
-        //     D = length(uLightPos2 - vFragPos);
-        //     Attenuation = 1.0 /
-        //         (uFalloff2.x + (uFalloff2.y*D) + (uFalloff2.z*D*D));
-            
-        //     if (uHasDiffuse2) {
-        //     diffuse += max(0.0, dot(normal, normalize(uLightPos2 - vFragPos)))
-        //         * Attenuation * uLightColor2.rgb * uLightColor2.a;
-        //     }
-
-        //     if (uHasSpec2) {
-        //         specular += pow(max(0.0, lightReflect.z), 2.0)
-        //             * Attenuation * uLightColor2.rgb * uLightColor2.a;
-        //     }
-        // }
 
         for(int i = 0; i < 8; i++){
             if(uLights[i].Active){
                 lightIncident = normalize(vFragPos - uLights[i].Pos);
                 lightReflect = reflect(lightIncident, normal);
-            
+
                 float D = length(uLights[i].Pos - vFragPos);
-                Attenuation = 1.0 /
-                    (uLights[i].Falloff.x + (uLights[i].Falloff.y*D) + (uLights[i].Falloff.z*D*D));
+                if (D <= uLights[i].Falloff.x) {
+                    Attenuation = 1.0;
+                } else { // attenuation between near and far distances
+                    float factor = D - uLights[i].Falloff.x;
+                    float total = uLights[i].Falloff.y - uLights[i].Falloff.x;
+                    Attenuation = smoothstep(0.0, 1.0,
+                        1.0 - (factor * factor) / (total * total));
+                }
             
                 if (uLights[i].HasDiffuse) {
                     diffuse += max(0.0, dot(normal, normalize(uLights[i].Pos - vFragPos)))
