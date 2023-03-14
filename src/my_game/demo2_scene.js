@@ -125,7 +125,7 @@ class MyGame extends engine.Scene {
       this.mLightSet
     );
     this.mRobber.getXform().setSize(8, 8);
-    this.mRobber.getXform().setPosition(50, 25);
+    this.mRobber.getXform().setPosition(10, 25);
 
     this.mRobberFacingLeft = true;
 
