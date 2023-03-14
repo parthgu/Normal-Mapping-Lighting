@@ -25,6 +25,7 @@ class NormalMapRenderable extends TextureRenderable {
       texture.activate(this.mNormalTexture, glSys.get().TEXTURE1);
 
     this.mShader.activate(this, camera); // always activate the shader first!
+
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 

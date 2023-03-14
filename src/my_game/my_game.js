@@ -141,12 +141,12 @@ class MyGame extends engine.Scene {
 
     this.mMsg2.setText("Light falloff: " + this.lightSource.getFalloff());
   }
-
 }
+export default MyGame;
 
-window.onload = function () {
-  engine.init("GLCanvas");
+// window.onload = function () {
+//   engine.init("GLCanvas");
 
-  let myGame = new MyGame();
-  myGame.start();
-};
+//   let myGame = new MyGame();
+//   myGame.start();
+// };
