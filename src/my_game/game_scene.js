@@ -24,17 +24,29 @@ class GameScene extends engine.Scene {
     this.mTorch = null;
     
     this.mTorchLight = new engine.LightSource();
-    this.mTorchLight.getXform().setPosition(17.5, 67, 1);
+    this.mTorchLight.getXform().setPosition(20, 67, 2);
     this.mTorchLight.setColor([1, 0.6, 0, 1]);
-    this.mTorchLight.setFalloff([5, 10]);
+    this.mTorchLight.setFalloff([5, 5]);
+    this.mTorchLight.setActive(false);
     this.mBeaconLight = new engine.LightSource();
     this.mBeaconLight.getXform().setPosition(80, 15, 0.5);
-    this.mBeaconLight.setFalloff([5, 10]);
+    this.mBeaconLight.setFalloff([5, 5]);
     this.mBeaconLight.setColor([1, 1, 1, 0.5]);
-    this.mLights = [this.mTorchLight, this.mBeaconLight];
 
-    let startColor = [0, 0, 0, 1];
-    let startXPos = 20;
+    this.kDuration = 300;
+    this.kRate = 0.05;
+    this.mTorchFlicker = new engine.Shake(0.2, 0.1, 30);
+    this.mBeaconMove = new engine.LerpVec2([80, 15], this.kDuration, this.kRate);
+    this.mBeaconRange = new engine.Lerp(5, this.kDuration, this.kRate);
+    this.mBeaconZ = new engine.Lerp(0.5, this.kDuration, this.kRate);
+    this.mBeaconIntensity = new engine.Lerp(0.5, this.kDuration, this.kRate);
+    this.mRowIntensity = new engine.Lerp(0, 400, 0.01);
+    this.mBeaconRange.setFinal(50);
+    this.mBeaconMove.setFinal([0, 45]);
+    this.mBeaconZ.setFinal(30);
+    this.mBeaconIntensity.setFinal(0.9);
+    
+    this.mLights = [this.mTorchLight, this.mBeaconLight];
     for (let i = 0; i < 3; i++) {
       let lights = [new engine.LightSource(), new engine.LightSource()];
       lights[0].getXform().setYPos(30);
@@ -43,24 +55,10 @@ class GameScene extends engine.Scene {
       lights.forEach(x => {
         x.setColor([0 + .3 * i, 0* i, 1, 0]);
         x.getXform().setXPos(40 + 30 * i);
-        x.setFalloff([0, 20])
+        x.setFalloff([0, 30])
         this.mLights.push(x);
       });
     }
-
-    let kDuration = 260;
-    let kRate = 0.02;
-    this.mTorchFlicker = new engine.Shake(0.2, 0.1, 30);
-    this.mBeaconMove = new engine.LerpVec2([80, 15], kDuration, kRate);
-    this.mBeaconRange = new engine.Lerp(5, kDuration, kRate);
-    this.mBeaconZ = new engine.Lerp(0.5, kDuration, kRate);
-    this.mBeaconIntensity = new engine.Lerp(0.5, kDuration, kRate);
-    this.mRowIntensity = new engine.Lerp(0, 400, 0.01);
-    this.mBeaconRange.setFinal(25);
-    this.mBeaconMove.setFinal([0, 50]);
-    this.mBeaconZ.setFinal(20);
-    this.mBeaconIntensity.setFinal(0.9);
-
     this.mBeaconRangeReached = false;
   }
 
@@ -96,6 +94,8 @@ class GameScene extends engine.Scene {
     );
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
     this.mCamera.setAmbientIntensity(0.05);
+    this.mCamera.configLerp(this.kRate, this.kDuration);
+
     this.mBackground = new engine.NormalMapRenderable(
       this.kPebble, // Texture
       this.kPebbleNormal, // Normal map
@@ -140,9 +140,8 @@ class GameScene extends engine.Scene {
     this.mTorch.getXform().setPosition(18, 65);
 
     this.mMsg = new engine.FontRenderable("");
-    this.mMsg.setTextHeight(2);
-    this.mMsg.setColor([1, 1, 1, 1]);
-
+    this.mMsg.setTextHeight(4);
+    this.mMsg.setColor([1, 1, 1, 0.7]);
   }
 
   draw() {
@@ -150,8 +149,8 @@ class GameScene extends engine.Scene {
     this.mCamera.setViewAndCameraMatrix();
 
     this.mBackground.draw(this.mCamera);
-    this.mWater.forEach(x => x.draw(this.mCamera));
     
+    this.mWater.forEach(x => x.draw(this.mCamera));
     this.mHero.draw(this.mCamera);
     this.mTorch.draw(this.mCamera);
     this.mMsg.draw(this.mCamera);
@@ -181,11 +180,11 @@ class GameScene extends engine.Scene {
     {
       this.mBeaconRangeReached = true;
       this.mRowIntensity.setFinal(1);
-      this.mCamera.zoomTowards([50, 40], 1.5);
+      this.mCamera.zoomTowards([50, 40], 2);
     }
 
     if (this.mBeaconRangeReached && this.mBeaconMove.mCyclesLeft > 0) {
-      this.mBeaconLight.setFalloff([this.mBeaconRange.get(), 50]);
+      this.mBeaconLight.setFalloff([this.mBeaconRange.get(), this.mBeaconRange.get()]);
       this.mBeaconLight.getXform().setPosition(
           this.mBeaconMove.get()[0],
           this.mBeaconMove.get()[1],
@@ -204,7 +203,7 @@ class GameScene extends engine.Scene {
     }
     this.mRowIntensity.update();
 
-    this.mTorchLight.setIntensity(0.7 + this.mTorchFlicker.getNext());
+    this.mTorchLight.setIntensity(0.4 + this.mTorchFlicker.getNext());
     if (this.mTorchFlicker.mNumCyclesLeft == 0) {
       this.mTorchFlicker.reStart();
     }
@@ -231,6 +230,10 @@ class GameScene extends engine.Scene {
       this.mTorch.getXform().incXPosBy(-kMoveSpeed);
     }
     
+    if (engine.input.isKeyClicked(engine.input.keys.T)) {
+      this.mTorchLight.toggle();
+    }
+
     this.mMsg.setText(
       "(" + this.mCamera.mouseWCX() + ", " + this.mCamera.mouseWCY() + ")"
     );
