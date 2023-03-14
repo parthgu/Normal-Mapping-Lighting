@@ -70,6 +70,7 @@ class NormalMapShader extends TextureShader {
     gl.uniform1f(this.mMaterialSpecularWeight, renderable.mSpecularWeight);
     gl.uniform1f(this.mMaterialShininess, renderable.mShininess);
 
+
     let lights = renderable.mLightSources;
     for (let i = 0; i < 8; i++) {
       this.getUniforms(i);
@@ -121,23 +122,6 @@ class NormalMapShader extends TextureShader {
 
   getGLUniformRefs1() {
     let gl = glSys.get();
-
-    this.uModelRTMatRef = gl.getUniformLocation(
-      this.mCompiledShader,
-      "uModelRTMat"
-    );
-
-    this.mLightPosModelSpaceRef = gl.getUniformLocation(
-      this.mCompiledShader,
-      "uLightPosModelSpace"
-    );
-
-    this.mIsInWCRef = gl.getUniformLocation(
-      this.mCompiledShader,
-      "uIsInWC"
-    );
-
-    // ----------------------------------------------------------------------
 
     this.mLightPosRef = gl.getUniformLocation(
       this.mCompiledShader,

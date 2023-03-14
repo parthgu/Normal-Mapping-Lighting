@@ -13,12 +13,17 @@ class LightSource {
     this.mIsActive = true;
   }
 
-  getXform() { return this.mXform; }
+  getXform() {
+    return this.mXform;
+  }
 
-  getModelSpaceXform() { return this.mModelSpaceXform; }
+  getColor() {
+    return this.mColor;
+  }
 
-  getColor() { return this.mColor; }
-  setColor(color) { this.mColor = color; }
+  setColor(color) {
+    this.mColor = color;
+  }
 
   getIntensity() {
     return this.mColor[3];

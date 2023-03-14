@@ -35,11 +35,6 @@ void main(void)  {
         normal = vec3(0.0, 0.0, 1.0);
     }
     
-    vec3 lightPosToUse = uLightPos;
-    if (!uIsInWC) {
-        lightPosToUse = vec3(uModelRTMat * vec4(uLightPosModelSpace, 1.0));
-    }
-
     vec4 result = textureColor;
     vec3 Ambient = uAmbientColor.rgb * uAmbientColor.a;
 

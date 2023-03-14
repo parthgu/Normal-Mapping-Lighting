@@ -81,35 +81,6 @@ class Transform {
 
         return matrix;
     }
-
-    getTranslateMatrix() {
-        let matrix = mat4.create();
-        mat4.translate(matrix, matrix, vec3.fromValues(this.getXPos(), this.getYPos(), 0.0));
-
-        return matrix;
-    }
-
-    getRotationMatrix() {
-        let matrix = mat4.create();
-        mat4.rotateZ(matrix, matrix, this.getRotationInRad());
-
-        return matrix;
-    }
-
-    getScaleMatrix() {
-        let matrix = mat4.create();
-        mat4.scale(matrix, matrix, vec3.fromValues(this.getWidth(), this.getHeight(), 1.0));
-
-        return matrix;
-    }
-
-    getTRMatrix() {
-        let matrix = mat4.create();
-        mat4.translate(matrix, matrix, vec3.fromValues(this.getXPos(), this.getYPos(), 0.0));
-        mat4.rotateZ(matrix, matrix, this.getRotationInRad());
-
-        return matrix;
-    }
 }
 
 export default Transform;

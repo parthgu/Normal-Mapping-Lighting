@@ -2,7 +2,7 @@
 
 import engine from "../engine/index.js";
 
-class StoneScene extends engine.Scene {
+class MyGame extends engine.Scene {
   constructor() {
     super();
 
@@ -220,9 +220,9 @@ class StoneScene extends engine.Scene {
   }
 }
 
-// window.onload = function () {
-//   engine.init("GLCanvas");
+window.onload = function () {
+  engine.init("GLCanvas");
 
-//   let myGame = new StoneScene();
-//   myGame.start();
-// };
+  let myGame = new MyGame();
+  myGame.start();
+};
