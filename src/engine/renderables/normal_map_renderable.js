@@ -24,9 +24,7 @@ class NormalMapRenderable extends TextureRenderable {
     if (this.mNormalTexture !== null)
       texture.activate(this.mNormalTexture, glSys.get().TEXTURE1);
 
-    this.mShader.activate(
-      this, camera
-    ); // always activate the shader first!
+    this.mShader.activate(this, camera); // always activate the shader first!
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
@@ -34,14 +32,26 @@ class NormalMapRenderable extends TextureRenderable {
     return this.mSecondTexture;
   }
 
+  setNormalMapTexture(texture) {
+    this.mNormalTexture = texture;
+  }
+
   getLightSources() {
     return this.mLightSources;
+  }
+
+  setLightSources(newLights) {
+    this.mLightSources = newLights;
   }
 
   addLightSource(light) {
     if (this.mLightSources.length < 8) {
       this.mLightSources.push(light);
     }
+  }
+
+  removeLightAt(index) {
+    this.mLightSources.splice(index, 1);
   }
 }
 
