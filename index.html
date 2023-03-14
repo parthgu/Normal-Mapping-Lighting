@@ -11,22 +11,14 @@
     <script type="text/javascript" src="src/lib/gl-matrix.js"></script>
 
     <!-- our game -->
-    <script type="module" src="./src/my_game/stone_scene.js"></script>
+    <script type="module" src="./src/my_game/demo2_scene.js"></script>
   </head>
 
   <body>
-    <canvas id="GLCanvas" width="640" height="480">
+    <canvas id="GLCanvas" width="960" height="480">
       <!-- GLCanvas is the area we will draw in: a 640x480 area. -->
       Your browser does not support the HTML5 canvas.
       <!-- this message will show only if WebGL clearing failed -->
     </canvas>
-    <div style="padding-left:10px">
-      <b>O</b>: Toggle diffuse component <br>
-      <b>P</b>: Toggle specular component <br>
-      <b>Arrow keys</b>: Control small renderable XY position<br>
-      <b>I J K L</b>: Control blue light XY position <br>
-      <b>Q / W</b>: Control blue light Z/height value <br>
-      <b>F G H / V B N</b>: Control blue light falloff values <br>
-      </div>
   </body>
 </html>
