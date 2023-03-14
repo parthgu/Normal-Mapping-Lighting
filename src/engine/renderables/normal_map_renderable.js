@@ -49,10 +49,6 @@ class NormalMapRenderable extends TextureRenderable {
       this.mLightSources.push(light);
     }
   }
-
-  removeLightAt(index) {
-    this.mLightSources.splice(index, 1);
-  }
 }
 
 export default NormalMapRenderable;
