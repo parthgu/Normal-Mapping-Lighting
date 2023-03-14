@@ -102,6 +102,8 @@ class Camera {
     return this.mBGColor;
   }
 
+  getAmbientIntensity() { return this.mAmbientColor[3]; }
+
   setAmbientIntensity(delta) {
     this.mAmbientColor[3] = delta;
   }
@@ -110,10 +112,11 @@ class Camera {
     this.mAmbientColor[3] += delta;
   }
 
+  getAmbientColor() { return this.mAmbientColor; }
+
   setAmbientColor(color) {
     this.mAmbientColor = color;
   }
-  // #endregion
 
   // #region Compute and access camera transform matrix
 

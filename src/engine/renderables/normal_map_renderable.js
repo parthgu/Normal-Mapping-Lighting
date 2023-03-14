@@ -10,7 +10,7 @@ class NormalMapRenderable extends TextureRenderable {
     super(texture);
     this.mNormalTexture = normalMapTexture;
     this.mLightSources = lightSources;
-
+    
     this.mDiffuseWeight = 0.7;
     this.mSpecularWeight = 0.7;
     this.mShininess = 16;
@@ -36,18 +36,32 @@ class NormalMapRenderable extends TextureRenderable {
     this.mNormalTexture = texture;
   }
 
-  getLightSources() {
-    return this.mLightSources;
+  getLightSources() { return this.mLightSources; }
+  setLightSources(newLights) { this.mLightSources = newLights; }
+
+  getDiffuseWeight() { return this.mDiffuseWeight; }
+  setDiffuseWeight(newVal) {
+    this.mDiffuseWeight = this._clampVal(newVal, 0 , 1);
+  }
+  incDiffuseWeightBy(delta) {
+    this.mDiffuseWeight = this._clampVal(this.mDiffuseWeight + delta, 0 , 1);
+  }
+  
+  getSpecularWeight() { return this.mSpecularWeight; }
+  setSpecularWeight(newVal) {
+    this.mSpecularWeight = this._clampVal(newVal, 0 , 1);
+  }
+  incSpecularWeightBy(delta) {
+    this.mSpecularWeight = this._clampVal(this.mSpecularWeight + delta, 0 , 1);
   }
 
-  setLightSources(newLights) {
-    this.mLightSources = newLights;
-  }
+  getShininess() { return this.mShininess; }
+  setShininess(newVal) { this.mShininess = Math.max(1, newVal); }
 
-  addLightSource(light) {
-    if (this.mLightSources.length < 8) {
-      this.mLightSources.push(light);
-    }
+  _clampVal(val, min, max) {
+    if (val < min) return min;
+    if (val > max) return max;
+    return val;
   }
 }
 

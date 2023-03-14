@@ -83,8 +83,8 @@ class NormalMapShader extends TextureShader {
           gl.uniform3fv(this.mPosRef, lights[i].getXform().getPosition());
           gl.uniform4fv(this.mColorRef, lights[i].getColor());
           gl.uniform2fv(this.mFalloffRef, lights[i].getFalloff());
-          gl.uniform1i(this.mHasDiffuseRef, lights[i].hasDiffuse());
-          gl.uniform1i(this.mHasSpecRef, lights[i].hasSpec());
+          gl.uniform1i(this.mHasDiffuseRef, true);
+          gl.uniform1i(this.mHasSpecRef, true);
         }
       } else {
         gl.uniform1i(this.mActiveRef, false);
