@@ -31,24 +31,26 @@ class MyGame extends engine.Scene {
   init() {
     this.mCamera = new engine.Camera(
       vec2.fromValues(50, 40), // position of the camera
-      75, // width of camera
+      100, // width of camera
       [0, 0, 640, 480] // viewport (orgX, orgY, width, height)
     );
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
 
     // Light objects ------------------------------------------------------------------------------------
     this.lightSource = new engine.LightSource();
-    this.lightSource.getXform().setPosition(50, 40, 5);
+    this.lightSource.getXform().setPosition(50, 40, 10);
     this.lightSource.setColor([0.97, 0.76, 0.47, 1.0]);
     this.lightFlicker = new engine.Shake(0.07, 1, 450);
 
     this.blueLightSource = new engine.LightSource();
     this.blueLightSource.getXform().setPosition(50, 40, 5);
     this.blueLightSource.setColor([0.2, 0.5, 0.97, 1]);
+    this.blueLightSource.setFalloff([0.4, 0.04, 0.0001]);
 
     this.redLightSource = new engine.LightSource();
     this.redLightSource.getXform().setPosition(50, 40, 3);
     this.redLightSource.setColor([0.8, 0.1, 0.1, 1]);
+    this.redLightSource.setFalloff([0.4, 0.04, 0.0001]);
     this.redLightBob = new engine.Oscillate(10, 10, 450);
     this.mRedLightAngle = 0;
 
@@ -58,20 +60,12 @@ class MyGame extends engine.Scene {
       this.redLightSource,
     ];
 
-    this.mLights1 = [
-      this.lightSource,
-      // this.blueLightSource,
-      // this.redLightSource,
-    ];
-
-    this.mLights2 = [this.redLightSource];
-
     // Renderables with normal map functionality ------------------------------------------
     this.bgR = new engine.NormalMapRenderable(
       this.kBg, // Texture
       this.kBgNormal, // Normal map
-      // null, // Normal map
-      this.mLights1
+      this.lightSource, // First light source
+      this.redLightSource // Second light source (optional)
     );
     this.bgR.getXform().setSize(30, 30);
     this.bgR.getXform().setPosition(50, 40);
@@ -79,7 +73,8 @@ class MyGame extends engine.Scene {
     this.mPlayer = new engine.NormalMapRenderable(
       this.kPlayer,
       this.kPlayerNormal,
-      this.mLights1
+      this.lightSource,
+      this.blueLightSource
     );
     this.mPlayer.getXform().setSize(100, 100);
     this.mPlayer.getXform().setPosition(50, 40);
@@ -163,43 +158,37 @@ class MyGame extends engine.Scene {
 
     // blue light movement controls ------------------------------------------------------------------------------------
     if (engine.input.isKeyPressed(engine.input.keys.W)) {
-      this.lightSource.getXform().incZPosBy(-0.5);
+      this.blueLightSource.getXform().incZPosBy(-0.5);
 
-      if (this.lightSource.getXform().getZPos() <= 0)
-        this.lightSource.getXform().setZPos(0);
+      if (this.blueLightSource.getXform().getZPos() < 0)
+        this.blueLightSource.getXform().setZPos(0);
     }
     if (engine.input.isKeyPressed(engine.input.keys.Q)) {
-      this.lightSource.getXform().incZPosBy(0.5);
+      this.blueLightSource.getXform().incZPosBy(0.5);
     }
-    // if (engine.input.isKeyPressed(engine.input.keys.I))
-    //   this.blueLightSource.getXform().incYPosBy(1);
-    // if (engine.input.isKeyPressed(engine.input.keys.K))
-    //   this.blueLightSource.getXform().incYPosBy(-1);
-    // if (engine.input.isKeyPressed(engine.input.keys.J))
-    //   this.blueLightSource.getXform().incXPosBy(-1);
-    // if (engine.input.isKeyPressed(engine.input.keys.L))
-    //   this.blueLightSource.getXform().incXPosBy(1);
+    if (engine.input.isKeyPressed(engine.input.keys.I))
+      this.blueLightSource.getXform().incYPosBy(1);
+    if (engine.input.isKeyPressed(engine.input.keys.K))
+      this.blueLightSource.getXform().incYPosBy(-1);
+    if (engine.input.isKeyPressed(engine.input.keys.J))
+      this.blueLightSource.getXform().incXPosBy(-1);
+    if (engine.input.isKeyPressed(engine.input.keys.L))
+      this.blueLightSource.getXform().incXPosBy(1);
 
     // blue light falloff controls ------------------------------------------------------------------------------------
     if (engine.input.isKeyPressed(engine.input.keys.F))
-      this.lightSource.incFalloffBy([0.5, 0]);
+      this.blueLightSource.incFalloffBy([0.01, 0, 0]);
     if (engine.input.isKeyPressed(engine.input.keys.G))
-      this.lightSource.incFalloffBy([0, 0.5]);
+      this.blueLightSource.incFalloffBy([0, 0.01, 0]);
+    if (engine.input.isKeyPressed(engine.input.keys.H))
+      this.blueLightSource.incFalloffBy([0, 0, 0.01]);
     if (engine.input.isKeyPressed(engine.input.keys.V))
-      this.lightSource.incFalloffBy([-0.5, 0]);
+      this.blueLightSource.incFalloffBy([-0.01, 0, 0]);
     if (engine.input.isKeyPressed(engine.input.keys.B))
-      this.lightSource.incFalloffBy([0, -0.5]);
+      this.blueLightSource.incFalloffBy([0, -0.01, 0]);
+    if (engine.input.isKeyPressed(engine.input.keys.N))
+      this.blueLightSource.incFalloffBy([0, 0, -0.01]);
 
-    if (engine.input.isKeyPressed(engine.input.keys.T)) {
-      this.mCamera.zoomBy(1.1);
-      this.mCamera.update();
-    }
-    
-    if (engine.input.isKeyPressed(engine.input.keys.Y)) {
-      this.mCamera.zoomBy(0.9)
-      this.mCamera.update();
-    }
-      
     // diffuse and specular toggles ------------------------------------------------------------------------------------
     if (engine.input.isKeyClicked(engine.input.keys.O))
       this.mLights.forEach((l) => {
