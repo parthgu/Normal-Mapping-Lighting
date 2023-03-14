@@ -1,51 +1,79 @@
-// this is the fragment (or pixel) shader
-
 precision mediump float;
-    // sets the precision for floating point computation
 
-// The object that fetches data from texture.
-// Must be set outside the shader.
 uniform sampler2D textureSampler;
+uniform bool uHasNormalMap;
 uniform sampler2D normalSampler;
+uniform vec4 uAmbientColor;
 
-// Color of pixel
-// uniform vec4 uPixelColor;
-uniform vec3 uCameraPos;
-uniform vec3 uLightPos;
+uniform float uMaterialDiffuseWeight;
+uniform float uMaterialSpecularWeight;
+uniform float uMaterialShininess;
 
-uniform float uIntensity;
-uniform float uRadius;
-
-// The "varying" keyword is for signifying that the texture coordinate will be
-// interpolated and thus varies. 
 varying vec2 vTexCoord;
 varying vec3 vFragPos;
 
-uniform vec3 uLightColor;
+struct Light{
+    bool Active;
+    vec3 Pos;
+    vec4 Color;
+    vec2 Falloff;
+    bool HasDiffuse;
+    bool HasSpec;
+};
+
+uniform Light uLights[8];
+
 vec3 normalZero = vec3(0.5, 0.5, 0.5);
 
-float diffuseWeight = 0.5;
-float specularWeight = 0.5;
-
 void main(void)  {
-    vec4 textureColor = texture2D(textureSampler, vec2(vTexCoord.s, vTexCoord.t));
-    vec3 normal = vec3(texture2D(normalSampler, vec2(vTexCoord.s, vTexCoord.t)));
-    normal = normalize(normal - normalZero);
-    
-    vec4 result = textureColor;
-    if (textureColor.a > 0.9) {
-        vec3 lightIncident = normalize(vFragPos - uLightPos);
-        vec3 lightReflect = reflect(lightIncident, normal);
-
-        vec3 ambient = uIntensity * uLightColor;
-        vec3 diffuse = max(0.0, dot(normal, normalize(uLightPos - vFragPos))) * diffuseWeight * uLightColor;
-        // vec3 specular = pow(max(0.0, dot(vec3(0.0, 0.0, 1.0), lightReflect)), 16.0) * 0.5 * lightColor;
-        vec3 specular = pow(max(0.0, lightReflect.z), 2.0) * specularWeight * uLightColor; // same result as calculation above
-        
-        // result = vec4((ambient + diffuse + specular) * vec3(result), 1.0);
-        // result = vec4((ambient + diffuse) * vec3(result), 1.0);
-        result = vec4((ambient + specular + diffuse) * vec3(result), 1.0);
+    vec4 textureColor = texture2D(textureSampler, vTexCoord);
+    vec3 normal = vec3(0.0);
+    if (uHasNormalMap) {
+        normal = texture2D(normalSampler, vTexCoord).rgb;
+        normal = normalize(normal - normalZero);
+    } else {
+        normal = vec3(0.0, 0.0, 1.0);
     }
     
+    vec4 result = textureColor;
+    vec3 Ambient = uAmbientColor.rgb * uAmbientColor.a;
+
+    if (textureColor.a > 0.9) {
+        vec3 diffuse = vec3(0.0);
+        vec3 specular = vec3(0.0);
+        vec3 lightIncident = vec3(0.0);
+        vec3 lightReflect = vec3(0.0);
+
+        float Attenuation = 0.0;
+
+        for(int i = 0; i < 8; i++) {
+            if(uLights[i].Active) {
+                lightIncident = normalize(vFragPos - uLights[i].Pos);
+                lightReflect = reflect(lightIncident, normal);
+
+                float D = length(uLights[i].Pos - vFragPos);
+                if (D <= uLights[i].Falloff.x) {
+                    Attenuation = 1.0;
+                } else { // attenuation between near and far distances
+                    float factor = D - uLights[i].Falloff.x;
+                    float total = uLights[i].Falloff.y;
+                    Attenuation = smoothstep(0.0, 1.0,
+                        1.0 - (factor * factor) / (total * total));
+                }
+            
+                if (uLights[i].HasDiffuse) {
+                    diffuse += max(0.0, dot(normal, normalize(uLights[i].Pos - vFragPos)))
+                        * Attenuation * uMaterialDiffuseWeight * uLights[i].Color.rgb * uLights[i].Color.a;
+                }
+
+                if (uLights[i].HasSpec) {
+                    specular += pow(max(0.0, lightReflect.z), uMaterialShininess)
+                        * Attenuation * uMaterialSpecularWeight * uLights[i].Color.rgb * uLights[i].Color.a;
+                }
+            }
+        }
+        
+        result = vec4((Ambient + diffuse + specular) * vec3(result), 1.0);
+    }
     gl_FragColor = result;
 }
