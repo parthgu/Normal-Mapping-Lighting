@@ -56,7 +56,8 @@ void main(void)  {
                     Attenuation = 1.0;
                 } else { // attenuation between near and far distances
                     float factor = D - uLights[i].Falloff.x;
-                    float total = uLights[i].Falloff.y - uLights[i].Falloff.x;
+                    float far = uLights[i].Falloff.y + uLights[i].Falloff.x;
+                    float total = far - uLights[i].Falloff.x;
                     Attenuation = smoothstep(0.0, 1.0,
                         1.0 - (factor * factor) / (total * total));
                 }

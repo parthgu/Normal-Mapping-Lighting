@@ -6,8 +6,7 @@ class LightSource {
   constructor() {
     this.mXform = new Transform();
     this.mColor = [1.0, 1.0, 1.0, 1.0];
-    this.mFalloff = [10, 10];
-    this.mFar = 0;
+    this.mFalloff = [10, 5];
 
     this.mHasDiffuse = true;
     this.mHasSpec = true;
@@ -46,8 +45,7 @@ class LightSource {
   }
   incFalloffBy(delta) {
     this.mFalloff[0] = this._clampVal(this.mFalloff[0] + delta[0], 5, 100);
-    this.mFar = this._clampVal(this.mFar + delta[1], 0, 100);
-    this.mFalloff[1] = this.mFalloff[0] + this.mFar;
+    this.mFalloff[1] = this._clampVal(this.mFalloff[1] + delta[1], 0, 100);
   }
 
   _clampVal(val, min, max) {
