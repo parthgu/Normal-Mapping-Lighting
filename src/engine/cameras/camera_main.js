@@ -47,7 +47,7 @@ class Camera {
 
     // background color
     this.mBGColor = [0.8, 0.8, 0.8, 1]; // RGB and Alpha
-    this.mAmbientColor = [1.0, 1.0, 1.0, .25];
+    this.mAmbientColor = [1.0, 1.0, 1.0, 0.25];
   }
 
   // #region Basic getter and setters
@@ -100,6 +100,18 @@ class Camera {
   }
   getBackgroundColor() {
     return this.mBGColor;
+  }
+
+  setAmbientIntensity(delta) {
+    this.mAmbientColor[3] = delta;
+  }
+
+  incAmbientIntensityBy(delta) {
+    this.mAmbientColor[3] += delta;
+  }
+
+  setAmbientColor(color) {
+    this.mAmbientColor = color;
   }
   // #endregion
 

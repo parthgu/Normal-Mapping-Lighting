@@ -6,11 +6,14 @@ import * as shaderResources from "../core/shader_resources.js";
 import * as texture from "../resources/texture.js";
 
 class NormalMapRenderable extends TextureRenderable {
-  constructor(texture, normalMapTexture, lightSource1, lightSource2 = null) {
+  constructor(texture, normalMapTexture, lightSources = null) {
     super(texture);
     this.mNormalTexture = normalMapTexture;
-    this.mLightSource = lightSource1;
-    this.mLightSource2 = lightSource2;
+    this.mLightSources = lightSources;
+
+    this.mDiffuseWeight = 0.7;
+    this.mSpecularWeight = 0.7;
+    this.mShininess = 16;
 
     super._setShader(shaderResources.getNormalMapShader());
   }
@@ -18,14 +21,11 @@ class NormalMapRenderable extends TextureRenderable {
   draw(camera) {
     let gl = glSys.get();
     texture.activate(this.mTexture);
-    texture.activate(this.mNormalTexture, glSys.get().TEXTURE1);
+    if (this.mNormalTexture !== null)
+      texture.activate(this.mNormalTexture, glSys.get().TEXTURE1);
 
-    this.mShader.activate(
-      this.mColor,
-      this.mXform.getTRSMatrix(), this.mXform.getTRMatrix(),
-      // this.mXform.getTRSMatrix(), this.mXform.getTRMatrix(),
-      camera, this.mLightSource, this.mLightSource2
-    ); // always activate the shader first!
+    this.mShader.activate(this, camera); // always activate the shader first!
+
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
@@ -33,16 +33,22 @@ class NormalMapRenderable extends TextureRenderable {
     return this.mSecondTexture;
   }
 
-  getLightSource() {
-    return this.mLightSource;
+  setNormalMapTexture(texture) {
+    this.mNormalTexture = texture;
   }
 
-  setLightSource(lightSource) {
-    this.mLightSource = lightSource;
+  getLightSources() {
+    return this.mLightSources;
   }
 
-  setLightSource2(lightSource) {
-    this.mLightSource2 = lightSource;
+  setLightSources(newLights) {
+    this.mLightSources = newLights;
+  }
+
+  addLightSource(light) {
+    if (this.mLightSources.length < 8) {
+      this.mLightSources.push(light);
+    }
   }
 }
 

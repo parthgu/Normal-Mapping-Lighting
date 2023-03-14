@@ -24,46 +24,99 @@ class NormalMapShader extends TextureShader {
       this.mCompiledShader,
       "uAmbientColor"
     );
+    
+    this.mHasNormalMap = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uHasNormalMap"
+    );
 
-    this.getGLUniformRefs1();
-    this.getGLUniformRefs2();
+    // material properties
+    this.mMaterialDiffuseWeight = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uMaterialDiffuseWeight"
+    );
+
+    this.mMaterialSpecularWeight = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uMaterialSpecularWeight"
+    );
+
+    this.mMaterialShininess = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uMaterialShininess"
+    );
   }
 
-  activate(pixelColor,
-    trsMatrix, modelMatNoScale,
-    camera, light, light2)
-  {
-      // first call the super class' activate
-    super.activate(pixelColor, trsMatrix, camera.getCameraMatrix());
-    
+  activate(renderable, camera) {
     let gl = glSys.get();
 
+    super.activate(
+      renderable.mColor,
+      renderable.mXform.getTRSMatrix(),
+      camera.getCameraMatrix()
+    );
+
     gl.uniform1i(this.mTextureRef, 0);
-    gl.uniform1i(this.mNormalRef, 1);
-    gl.uniform4fv(this.mAmbientColorRef, camera.mAmbientColor);
-
-    gl.uniform1i(this.mHasDiffuseRef, light.mHasDiffuse);
-    gl.uniform1i(this.mHasSpecRef, light.mHasSpec);
-    gl.uniform3fv(this.mLightPosRef, light.getXform().getPosition());
-    gl.uniform4fv(this.mLightColorRef, light.mColor);
-    gl.uniform3fv(this.mFalloffRef, light.mFalloff);
-
-    gl.uniform1i(this.mIsInWCRef, light.mIsUsingWC);
-    gl.uniformMatrix4fv(this.uModelRTMatRef, false, modelMatNoScale);
-    gl.uniform3fv(this.mLightPosModelSpaceRef,
-        light.getModelSpaceXform().getPosition());
-
-    if (light2 != null) {
-      gl.uniform1i(this.mIsSecondLightActiveRef, true);
-
-      gl.uniform1i(this.mHasDiffuseRef2, light2.mHasDiffuse);
-      gl.uniform1i(this.mHasSpecRef2, light2.mHasSpec);
-      gl.uniform3fv(this.mLightPosRef2, light2.getXform().getPosition());
-      gl.uniform4fv(this.mLightColorRef2, light2.mColor);
-      gl.uniform3fv(this.mFalloffRef2, light2.mFalloff);
+    
+    if (renderable.mNormalTexture !== null) {
+      gl.uniform1i(this.mHasNormalMap, true);
+      gl.uniform1i(this.mNormalRef, 1);
     } else {
-      gl.uniform1i(this.mIsSecondLightActiveRef, false);
+      gl.uniform1i(this.mHasNormalMap, false);
     }
+      
+    gl.uniform4fv(this.mAmbientColorRef, camera.mAmbientColor);
+    gl.uniform1f(this.mMaterialDiffuseWeight, renderable.mDiffuseWeight);
+    gl.uniform1f(this.mMaterialSpecularWeight, renderable.mSpecularWeight);
+    gl.uniform1f(this.mMaterialShininess, renderable.mShininess);
+
+    let lights = renderable.mLightSources;
+    for (let i = 0; i < 8; i++) {
+      this.getUniforms(i);
+
+      if (lights != null) {
+        if (lights[i] == null) {
+          gl.uniform1i(this.mActiveRef, false);
+        } else {
+          gl.uniform1i(this.mActiveRef, lights[i].isActive());
+          gl.uniform3fv(this.mPosRef, lights[i].getXform().getPosition());
+          gl.uniform4fv(this.mColorRef, lights[i].getColor());
+          gl.uniform2fv(this.mFalloffRef, lights[i].getFalloff());
+          gl.uniform1i(this.mHasDiffuseRef, lights[i].hasDiffuse());
+          gl.uniform1i(this.mHasSpecRef, lights[i].hasSpec());
+        }
+      } else {
+        gl.uniform1i(this.mActiveRef, false);
+      }
+    }
+  }
+  
+  getUniforms(index) {
+    let gl = glSys.get();
+    this.mActiveRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].Active"
+    );
+    this.mPosRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].Pos"
+    );
+    this.mColorRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].Color"
+    );
+    this.mFalloffRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].Falloff"
+    );
+    this.mHasDiffuseRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].HasDiffuse"
+    );
+    this.mHasSpecRef = gl.getUniformLocation(
+      this.mCompiledShader,
+      "uLights[" + index + "].HasSpec"
+    );
   }
 
   getGLUniformRefs1() {
@@ -96,17 +149,14 @@ class NormalMapShader extends TextureShader {
       "uLightColor"
     );
 
-    this.mFalloffRef = gl.getUniformLocation(
-      this.mCompiledShader,
-      "uFalloff");
+    this.mFalloffRef = gl.getUniformLocation(this.mCompiledShader, "uFalloff");
 
     this.mHasDiffuseRef = gl.getUniformLocation(
       this.mCompiledShader,
-      "uHasDiffuse");
+      "uHasDiffuse"
+    );
 
-    this.mHasSpecRef = gl.getUniformLocation(
-      this.mCompiledShader,
-      "uHasSpec");
+    this.mHasSpecRef = gl.getUniformLocation(this.mCompiledShader, "uHasSpec");
   }
 
   getGLUniformRefs2() {
@@ -129,15 +179,18 @@ class NormalMapShader extends TextureShader {
 
     this.mFalloffRef2 = gl.getUniformLocation(
       this.mCompiledShader,
-      "uFalloff2");
+      "uFalloff2"
+    );
 
     this.mHasDiffuseRef2 = gl.getUniformLocation(
       this.mCompiledShader,
-      "uHasDiffuse2");
+      "uHasDiffuse2"
+    );
 
     this.mHasSpecRef2 = gl.getUniformLocation(
       this.mCompiledShader,
-      "uHasSpec2");
+      "uHasSpec2"
+    );
   }
 }
 

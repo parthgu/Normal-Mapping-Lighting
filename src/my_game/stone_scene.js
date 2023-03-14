@@ -5,7 +5,7 @@ import engine from "../engine/index.js";
 class StoneScene extends engine.Scene {
   constructor() {
     super();
-    
+
     this.kBg = "assets/Rock_044_BaseColor.jpg";
     this.kBgNormal = "assets/Rock_044_Normal.jpg";
     this.kPlayer = "assets/Pebbles_028_BaseColor.jpg";
@@ -20,7 +20,7 @@ class StoneScene extends engine.Scene {
     engine.texture.load(this.kPlayer);
     engine.texture.load(this.kPlayerNormal);
   }
-  
+
   unload() {
     engine.texture.unload(this.kBg);
     engine.texture.unload(this.kBgNormal);
@@ -31,37 +31,47 @@ class StoneScene extends engine.Scene {
   init() {
     this.mCamera = new engine.Camera(
       vec2.fromValues(50, 40), // position of the camera
-      100, // width of camera
+      75, // width of camera
       [0, 0, 640, 480] // viewport (orgX, orgY, width, height)
     );
     this.mCamera.setBackgroundColor([0.8, 0.8, 0.8, 1]);
 
     // Light objects ------------------------------------------------------------------------------------
     this.lightSource = new engine.LightSource();
-    this.lightSource.getXform().setPosition(50, 40, 10);
+    this.lightSource.getXform().setPosition(50, 40, 5);
     this.lightSource.setColor([0.97, 0.76, 0.47, 1.0]);
     this.lightFlicker = new engine.Shake(0.07, 1, 450);
-    
+
     this.blueLightSource = new engine.LightSource();
     this.blueLightSource.getXform().setPosition(50, 40, 5);
     this.blueLightSource.setColor([0.2, 0.5, 0.97, 1]);
-    this.blueLightSource.setFalloff([0.4, 0.04, 0.0001]);
-    
+
     this.redLightSource = new engine.LightSource();
     this.redLightSource.getXform().setPosition(50, 40, 3);
     this.redLightSource.setColor([0.8, 0.1, 0.1, 1]);
-    this.redLightSource.setFalloff([0.4, 0.04, 0.0001]);
     this.redLightBob = new engine.Oscillate(10, 10, 450);
     this.mRedLightAngle = 0;
 
-    this.mLights = [this.lightSource, this.blueLightSource, this.redLightSource];
+    this.mLights = [
+      this.lightSource,
+      this.blueLightSource,
+      this.redLightSource,
+    ];
+
+    this.mLights1 = [
+      this.lightSource,
+      // this.blueLightSource,
+      // this.redLightSource,
+    ];
+
+    this.mLights2 = [this.redLightSource];
 
     // Renderables with normal map functionality ------------------------------------------
     this.bgR = new engine.NormalMapRenderable(
       this.kBg, // Texture
       this.kBgNormal, // Normal map
-      this.lightSource, // First light source
-      this.redLightSource // Second light source (optional)
+      // null, // Normal map
+      this.mLights1
     );
     this.bgR.getXform().setSize(30, 30);
     this.bgR.getXform().setPosition(50, 40);
@@ -69,12 +79,11 @@ class StoneScene extends engine.Scene {
     this.mPlayer = new engine.NormalMapRenderable(
       this.kPlayer,
       this.kPlayerNormal,
-      this.lightSource,
-      this.blueLightSource
+      this.mLights1
     );
     this.mPlayer.getXform().setSize(100, 100);
     this.mPlayer.getXform().setPosition(50, 40);
-    
+
     // Status messages ------------------------------------------------------------------------------------
     this.mMsg = new engine.FontRenderable("");
     this.mMsg.setColor([1, 1, 1, 1]);
@@ -104,16 +113,18 @@ class StoneScene extends engine.Scene {
     // red light movement ------------------------------------------------------------------------------------
     let kOrbitRadius = 15;
     let kRotSpeed = 100;
-    let kRotSpeedRadians = (kRotSpeed * 2 * Math.PI / 360) / 60;
+    let kRotSpeedRadians = (kRotSpeed * 2 * Math.PI) / 360 / 60;
 
     if (this.redLightBob.mNumCyclesLeft < this.redLightBob.mCycles / 1.4) {
       this.redLightBob.reStart();
     }
-    this.redLightSource.getXform().setPosition(
-      50 + kOrbitRadius * Math.cos(this.mRedLightAngle),
-      40 + kOrbitRadius * Math.sin(this.mRedLightAngle),
-      3 + this.redLightBob.getNext()
-    )
+    this.redLightSource
+      .getXform()
+      .setPosition(
+        50 + kOrbitRadius * Math.cos(this.mRedLightAngle),
+        40 + kOrbitRadius * Math.sin(this.mRedLightAngle),
+        3 + this.redLightBob.getNext()
+      );
     this.mRedLightAngle += kRotSpeedRadians;
 
     this.lightSource.setIntensity(
@@ -128,12 +139,14 @@ class StoneScene extends engine.Scene {
       this.lightSource.getIntensity() + this.lightFlicker.getNext()
     );
 
-    this.lightSource.getXform().setPosition(
-      this.mCamera.mouseWCX(),
-      this.mCamera.mouseWCY(),
-      this.lightSource.getXform().getZPos()
-    );
-    
+    this.lightSource
+      .getXform()
+      .setPosition(
+        this.mCamera.mouseWCX(),
+        this.mCamera.mouseWCY(),
+        this.lightSource.getXform().getZPos()
+      );
+
     // small renderable controls ------------------------------------------------------------------------------------
     if (engine.input.isKeyPressed(engine.input.keys.Up)) {
       this.bgR.getXform().incYPosBy(1);
@@ -150,45 +163,51 @@ class StoneScene extends engine.Scene {
 
     // blue light movement controls ------------------------------------------------------------------------------------
     if (engine.input.isKeyPressed(engine.input.keys.W)) {
-      this.blueLightSource.getXform().incZPosBy(-0.5);
+      this.lightSource.getXform().incZPosBy(-0.5);
 
-      if (this.blueLightSource.getXform().getZPos() < 0)
-        this.blueLightSource.getXform().setZPos(0);
+      if (this.lightSource.getXform().getZPos() <= 0)
+        this.lightSource.getXform().setZPos(0);
     }
     if (engine.input.isKeyPressed(engine.input.keys.Q)) {
-      this.blueLightSource.getXform().incZPosBy(0.5);
+      this.lightSource.getXform().incZPosBy(0.5);
     }
-    if (engine.input.isKeyPressed(engine.input.keys.I))
-      this.blueLightSource.getXform().incYPosBy(1);
-    if (engine.input.isKeyPressed(engine.input.keys.K))
-      this.blueLightSource.getXform().incYPosBy(-1);
-    if (engine.input.isKeyPressed(engine.input.keys.J))
-      this.blueLightSource.getXform().incXPosBy(-1);
-    if (engine.input.isKeyPressed(engine.input.keys.L))
-      this.blueLightSource.getXform().incXPosBy(1);
+    // if (engine.input.isKeyPressed(engine.input.keys.I))
+    //   this.blueLightSource.getXform().incYPosBy(1);
+    // if (engine.input.isKeyPressed(engine.input.keys.K))
+    //   this.blueLightSource.getXform().incYPosBy(-1);
+    // if (engine.input.isKeyPressed(engine.input.keys.J))
+    //   this.blueLightSource.getXform().incXPosBy(-1);
+    // if (engine.input.isKeyPressed(engine.input.keys.L))
+    //   this.blueLightSource.getXform().incXPosBy(1);
 
     // blue light falloff controls ------------------------------------------------------------------------------------
     if (engine.input.isKeyPressed(engine.input.keys.F))
-      this.blueLightSource.incFalloffBy([0.01, 0, 0]);
+      this.lightSource.incFalloffBy([0.5, 0]);
     if (engine.input.isKeyPressed(engine.input.keys.G))
-      this.blueLightSource.incFalloffBy([0, 0.01, 0]);
-    if (engine.input.isKeyPressed(engine.input.keys.H))
-      this.blueLightSource.incFalloffBy([0, 0, 0.01]);
+      this.lightSource.incFalloffBy([0, 0.5]);
     if (engine.input.isKeyPressed(engine.input.keys.V))
-      this.blueLightSource.incFalloffBy([-0.01, 0, 0]);
+      this.lightSource.incFalloffBy([-0.5, 0]);
     if (engine.input.isKeyPressed(engine.input.keys.B))
-      this.blueLightSource.incFalloffBy([0, -0.01, 0]);
-    if (engine.input.isKeyPressed(engine.input.keys.N))
-      this.blueLightSource.incFalloffBy([0, 0, -0.01]);
+      this.lightSource.incFalloffBy([0, -0.5]);
 
+    if (engine.input.isKeyPressed(engine.input.keys.T)) {
+      this.mCamera.zoomBy(1.1);
+      this.mCamera.update();
+    }
+    
+    if (engine.input.isKeyPressed(engine.input.keys.Y)) {
+      this.mCamera.zoomBy(0.9)
+      this.mCamera.update();
+    }
+      
     // diffuse and specular toggles ------------------------------------------------------------------------------------
     if (engine.input.isKeyClicked(engine.input.keys.O))
-      this.mLights.forEach(l => {
+      this.mLights.forEach((l) => {
         l.mHasDiffuse = !l.mHasDiffuse;
       });
 
     if (engine.input.isKeyClicked(engine.input.keys.P))
-      this.mLights.forEach(l => {
+      this.mLights.forEach((l) => {
         l.mHasSpec = !l.mHasSpec;
       });
 
