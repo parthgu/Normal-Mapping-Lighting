@@ -5,7 +5,7 @@ import Transform from "./utils/transform.js";
 class LightSource {
   constructor() {
     this.mXform = new Transform();
-    this.mColor = [1.0, 0.0, 1.0, 1.0];
+    this.mColor = [1.0, 1.0, 1.0, 1.0];
     this.mFalloff = [10, 10];
     this.mFar = 0;
 
@@ -60,6 +60,10 @@ class LightSource {
     return this.mIsActive;
   }
 
+  setActive(val) {
+    this.mIsActive = val;
+  }
+
   toggle() {
     this.mIsActive = !this.mIsActive;
   }
@@ -68,8 +72,16 @@ class LightSource {
     return this.mHasDiffuse;
   }
 
+  setDiffuse(val) {
+    this.mHasDiffuse = val;
+  }
+
   hasSpec() {
     return this.mHasSpec;
+  }
+
+  setSpec(val) {
+    this.mHasSpec = val;
   }
 }
 
