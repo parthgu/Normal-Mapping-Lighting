@@ -44,8 +44,8 @@ class LightSource {
     this.mFalloff = newVal;
   }
   incFalloffBy(delta) {
-    this.mFalloff[0] = this._clampVal(this.mFalloff[0] + delta[0], 5, 100);
-    this.mFalloff[1] = this._clampVal(this.mFalloff[1] + delta[1], 0, 100);
+    this.mFalloff[0] = Math.max(this.mFalloff[0] + delta[0], 0);
+    this.mFalloff[1] = Math.max(this.mFalloff[1] + delta[1], 0);
   }
 
   _clampVal(val, min, max) {
