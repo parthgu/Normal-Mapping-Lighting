@@ -1,6 +1,7 @@
 "use strict"; // Operate in Strict mode such that variables must be declared before used!
 
 import engine from "../engine/index.js";
+import PoliceCar from "./objects/police_car.js";
 
 class MyGame extends engine.Scene {
   constructor() {
@@ -68,7 +69,7 @@ class MyGame extends engine.Scene {
 
     this.mBlueLight = new engine.LightSource();
     this.mBlueLight.getXform().setPosition(50, 25, 10);
-    this.mBlueLight.setColor([0, 0, 1, 1]);
+    this.mBlueLight.setColor([0, 0.1, 1, 1]);
     this.mBlueLight.setFalloff([10, 10]);
 
     this.mStartTime = performance.now();
@@ -128,15 +129,9 @@ class MyGame extends engine.Scene {
 
     this.mRobberFacingLeft = true;
 
-    this.mPoliceCar = new engine.NormalMapRenderable(
-      this.kPoliceCar,
-      null,
-      this.mLightSet
-    );
-    this.mPoliceCar.getXform().setSize(15, 10);
-    this.mPoliceCar.getXform().setPosition(75, 25);
+    this.mPoliceCar = new PoliceCar(this.kPoliceCar, null, this.mLightSet);
 
-    this.mCamera.setAmbientIntensity(0.25);
+    this.mCamera.setAmbientIntensity(0.175);
 
     this.lightFlicker1 = new engine.Shake(0.5, 10, 450);
     this.lightFlicker2 = new engine.Shake(0.5, 8, 300);
@@ -164,6 +159,13 @@ class MyGame extends engine.Scene {
       this.mBlueLight.toggle();
       this.mStartTime = performance.now();
     }
+    let rate = 1;
+    this.mPoliceCar.rotateObjPointTo(
+      this.mRobber.getXform().getPosition(),
+      rate
+    );
+    this.mPoliceCar.update();
+
     if (this.lightFlicker1.mNumCyclesLeft < this.lightFlicker1.mCycles / 1.4) {
       this.lightFlicker.reStart();
     }
