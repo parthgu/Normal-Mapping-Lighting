@@ -200,19 +200,6 @@ class MyGame extends engine.Scene {
       this.mRobber.getXform().incXPosBy(-0.25);
     }
 
-    if (engine.input.isKeyPressed(engine.input.keys.Up)) {
-      this.mPoliceCar.getXform().incYPosBy(0.3);
-    }
-    if (engine.input.isKeyPressed(engine.input.keys.Down)) {
-      this.mPoliceCar.getXform().incYPosBy(-0.3);
-    }
-    if (engine.input.isKeyPressed(engine.input.keys.Left)) {
-      this.mPoliceCar.getXform().incXPosBy(-0.3);
-    }
-    if (engine.input.isKeyPressed(engine.input.keys.Right)) {
-      this.mPoliceCar.getXform().incXPosBy(0.3);
-    }
-
     this.mRedLight
       .getXform()
       .setPosition(
